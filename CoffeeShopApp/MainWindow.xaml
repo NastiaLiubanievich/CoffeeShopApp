@@ -35,7 +35,10 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <Border Background="{Binding PhotoBrush}" CornerRadius="8,8,0,0"/>
+                        <Border CornerRadius="8,8,0,0" ClipToBounds="True">
+                            <Image Source="{Binding Product.ImagePath}"
+                                   Stretch="UniformToFill"/>
+                        </Border>
 
                         <Grid Grid.Row="1" Margin="16,12,14,12">
                             <Grid.RowDefinitions>
@@ -93,8 +96,10 @@
 
                 <Border Width="50"
                         Height="50"
-                        Background="{Binding PhotoBrush}"
-                        CornerRadius="7"/>
+                        CornerRadius="7"
+                        ClipToBounds="True">
+                    <Image Source="{Binding Product.ImagePath}" Stretch="UniformToFill"/>
+                </Border>
 
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                     <TextBlock Text="{Binding Product.Name}"
@@ -183,7 +188,7 @@
 
                 <StackPanel Grid.Row="1" Margin="12,16">
                     <Button Style="{StaticResource NavButtonStyle}" Background="#B99B77" Content="Замовлення"/>
-                    <Button Style="{StaticResource NavButtonStyle}" Content="Меню"/>
+                    <Button Style="{StaticResource NavButtonStyle}" Content="Меню" Click="MenuButton_Click"/>
                     <Button Style="{StaticResource NavButtonStyle}" Content="Категорії" Click="CategoriesButton_Click"/>
                     <Button Style="{StaticResource NavButtonStyle}" Content="Історія" Click="OrdersHistoryButton_Click"/>
                     <Button Style="{StaticResource NavButtonStyle}" Content="Товари" Click="ProductsButton_Click"/>

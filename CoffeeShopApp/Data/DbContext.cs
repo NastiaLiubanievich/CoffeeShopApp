@@ -1,8 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CoffeeShopApp.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,7 +18,6 @@ public class CoffeeShopDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Категорії
         modelBuilder.Entity<Category>().HasData(
             new Category { Id = 1, Name = "Кава" },
             new Category { Id = 2, Name = "Холодні напої" },
@@ -35,49 +29,75 @@ public class CoffeeShopDbContext : DbContext
 
         var seedDate = new DateTime(2025, 1, 1);
 
-        // Товари
+        Product Product(int id, string name, string description, decimal price, int categoryId, string imageName)
+        {
+            return new Product
+            {
+                Id = id,
+                Name = name,
+                Description = description,
+                Price = price,
+                CategoryId = categoryId,
+                ImagePath = $"Assets/Products/{imageName}.png",
+                IsAvailable = true,
+                CreatedAt = seedDate
+            };
+        }
+
         modelBuilder.Entity<Product>().HasData(
-            // Кава
-            new Product { Id = 1, Name = "Еспресо", Description = "Класичний міцний еспресо", Price = 25m, CategoryId = 1, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 2, Name = "Допіо", Description = "Подвійний еспресо", Price = 35m, CategoryId = 1, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 3, Name = "Американо", Description = "Еспресо з гарячою водою", Price = 30m, CategoryId = 1, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 4, Name = "Капучино", Description = "Еспресо з молоком та пінкою", Price = 40m, CategoryId = 1, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 5, Name = "Лате", Description = "Ніжна кава з молоком", Price = 45m, CategoryId = 1, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 6, Name = "Флет Вайт", Description = "Подвійний еспресо з молоком", Price = 50m, CategoryId = 1, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 7, Name = "Раф кава", Description = "Кава з вершками та ваніллю", Price = 55m, CategoryId = 1, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 8, Name = "Мокачино", Description = "Кава з шоколадом", Price = 55m, CategoryId = 1, IsAvailable = true, CreatedAt = seedDate },
+            Product(1, "Еспресо", "Класичний міцний еспресо", 25m, 1, "espresso"),
+            Product(2, "Допіо", "Подвійний еспресо", 35m, 1, "dopio"),
+            Product(3, "Американо", "Еспресо з гарячою водою", 30m, 1, "americano"),
+            Product(4, "Капучино", "Еспресо з молоком та пінкою", 40m, 1, "cappuccino"),
+            Product(5, "Лате", "Ніжна кава з молоком", 45m, 1, "latte"),
+            Product(6, "Флет Вайт", "Подвійний еспресо з молоком", 50m, 1, "flat-white"),
+            Product(7, "Раф кава", "Кава з вершками та ваніллю", 55m, 1, "raf"),
+            Product(8, "Мокачино", "Кава з шоколадом", 55m, 1, "mochaccino"),
+            Product(30, "Макіато", "Еспресо з молочною пінкою", 42m, 1, "macchiato"),
+            Product(31, "Карамельний лате", "Лате з карамельним сиропом", 62m, 1, "caramel-latte"),
+            Product(48, "Фільтр кава", "Чорна кава ручного заварювання", 48m, 1, "filter-coffee"),
 
-            // Холодні напої
-            new Product { Id = 9, Name = "Колд брю", Description = "Кава холодного заварювання", Price = 55m, CategoryId = 2, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 10, Name = "Колд брю тонік", Description = "Колд брю з тоніком", Price = 65m, CategoryId = 2, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 11, Name = "Айс лате", Description = "Холодне лате з льодом", Price = 55m, CategoryId = 2, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 12, Name = "Лимонад", Description = "Домашній лимонад", Price = 45m, CategoryId = 2, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 13, Name = "Апельсиновий фреш", Description = "Свіжовичавлений сік", Price = 60m, CategoryId = 2, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 14, Name = "Чай", Description = "Чорний або зелений чай", Price = 30m, CategoryId = 2, IsAvailable = true, CreatedAt = seedDate },
+            Product(9, "Колд брю", "Кава холодного заварювання", 55m, 2, "cold-brew"),
+            Product(10, "Колд брю тонік", "Колд брю з тоніком", 65m, 2, "cold-brew-tonic"),
+            Product(11, "Айс лате", "Холодне лате з льодом", 55m, 2, "ice-latte"),
+            Product(12, "Лимонад", "Домашній лимонад", 45m, 2, "lemonade"),
+            Product(13, "Апельсиновий фреш", "Свіжовичавлений сік", 60m, 2, "orange-fresh"),
+            Product(14, "Чай", "Чорний або зелений чай", 30m, 2, "tea"),
+            Product(32, "Матча лате", "Матча з молоком", 68m, 2, "matcha-latte"),
+            Product(33, "Ягідний смузі", "Смузі з ягодами та бананом", 72m, 2, "berry-smoothie"),
+            Product(42, "Какао", "Гаряче какао з молоком", 48m, 2, "cocoa"),
+            Product(43, "Зелений чай", "Китайський зелений чай", 35m, 2, "green-tea"),
 
-            // Сніданки
-            new Product { Id = 15, Name = "Англійський сніданок", Description = "Яєчня, бекон, тости", Price = 120m, CategoryId = 3, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 16, Name = "Омлет з сиром", Description = "Ніжний омлет з сиром", Price = 85m, CategoryId = 3, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 17, Name = "Сирники", Description = "Сирники зі сметаною", Price = 95m, CategoryId = 3, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 18, Name = "Вівсянка з фруктами", Description = "Корисний сніданок", Price = 75m, CategoryId = 3, IsAvailable = true, CreatedAt = seedDate },
+            Product(15, "Англійський сніданок", "Яєчня, бекон, тости", 120m, 3, "english-breakfast"),
+            Product(16, "Омлет з сиром", "Ніжний омлет з сиром", 85m, 3, "cheese-omelet"),
+            Product(17, "Сирники", "Сирники зі сметаною", 95m, 3, "syrnyky"),
+            Product(18, "Вівсянка з фруктами", "Корисний сніданок", 75m, 3, "oatmeal"),
+            Product(34, "Гранола", "Гранола з йогуртом та ягодами", 88m, 3, "granola"),
+            Product(35, "Панкейки", "Панкейки з сиропом", 98m, 3, "pancakes"),
+            Product(45, "Кіш з куркою", "Солоний пиріг з куркою", 92m, 3, "quiche"),
 
-            // Сендвічі
-            new Product { Id = 19, Name = "Сендвіч з куркою", Description = "Курка, сир, овочі", Price = 85m, CategoryId = 4, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 20, Name = "Паніні з шинкою", Description = "Теплий сендвіч", Price = 90m, CategoryId = 4, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 21, Name = "Тост з авокадо", Description = "Тост з авокадо та яйцем", Price = 110m, CategoryId = 4, IsAvailable = true, CreatedAt = seedDate },
+            Product(19, "Сендвіч з куркою", "Курка, сир, овочі", 85m, 4, "chicken-sandwich"),
+            Product(20, "Паніні з шинкою", "Теплий сендвіч", 90m, 4, "ham-panini"),
+            Product(21, "Тост з авокадо", "Тост з авокадо та яйцем", 110m, 4, "avocado-toast"),
+            Product(36, "Бейгл з лососем", "Бейгл з крем-сиром та лососем", 135m, 4, "salmon-bagel"),
+            Product(37, "Овочевий рол", "Рол з овочами та соусом", 82m, 4, "veggie-wrap"),
+            Product(44, "Брускета", "Тости з томатами та сиром", 78m, 4, "bruschetta"),
 
-            // Випічка
-            new Product { Id = 22, Name = "Круасан", Description = "Французький круасан", Price = 35m, CategoryId = 5, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 23, Name = "Круасан з шоколадом", Description = "Круасан з шоколадною начинкою", Price = 45m, CategoryId = 5, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 24, Name = "Булочка з корицею", Description = "Ароматна булочка", Price = 42m, CategoryId = 5, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 25, Name = "Маффін шоколадний", Description = "Шоколадний маффін", Price = 38m, CategoryId = 5, IsAvailable = true, CreatedAt = seedDate },
+            Product(22, "Круасан", "Французький круасан", 35m, 5, "croissant"),
+            Product(23, "Круасан з шоколадом", "Круасан з шоколадною начинкою", 45m, 5, "chocolate-croissant"),
+            Product(24, "Булочка з корицею", "Ароматна булочка", 42m, 5, "cinnamon-roll"),
+            Product(25, "Маффін шоколадний", "Шоколадний маффін", 38m, 5, "chocolate-muffin"),
+            Product(38, "Багет", "Хрусткий міні-багет", 32m, 5, "baguette"),
+            Product(39, "Мигдалевий круасан", "Круасан з мигдалевим кремом", 58m, 5, "almond-croissant"),
+            Product(46, "Банановий хліб", "Солодка випічка з бананом", 52m, 5, "banana-bread"),
 
-            // Десерти
-            new Product { Id = 26, Name = "Чізкейк", Description = "Класичний чізкейк", Price = 75m, CategoryId = 6, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 27, Name = "Тірамісу", Description = "Італійський десерт", Price = 80m, CategoryId = 6, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 28, Name = "Брауні", Description = "Шоколадний десерт", Price = 60m, CategoryId = 6, IsAvailable = true, CreatedAt = seedDate },
-            new Product { Id = 29, Name = "Медівник", Description = "Домашній медовий торт", Price = 70m, CategoryId = 6, IsAvailable = true, CreatedAt = seedDate }
+            Product(26, "Чізкейк", "Класичний чізкейк", 75m, 6, "cheesecake"),
+            Product(27, "Тірамісу", "Італійський десерт", 80m, 6, "tiramisu"),
+            Product(28, "Брауні", "Шоколадний десерт", 60m, 6, "brownie"),
+            Product(29, "Медівник", "Домашній медовий торт", 70m, 6, "honey-cake"),
+            Product(40, "Еклер", "Еклер із заварним кремом", 62m, 6, "eclair"),
+            Product(41, "Макаронс", "Набір мигдалевого печива", 90m, 6, "macaron-set"),
+            Product(47, "Шоколадний мус", "Легкий мус з чорного шоколаду", 78m, 6, "mousse")
         );
     }
 }
-

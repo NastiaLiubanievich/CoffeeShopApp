@@ -58,7 +58,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Категорія" Binding="{Binding Category}" Width="*"/>
                     <DataGridTextColumn Header="Продано одиниць" Binding="{Binding Quantity}" Width="160"/>
-                    <DataGridTextColumn Header="Сума" Binding="{Binding Total, StringFormat={}{0:0} ₴}" Width="140"/>
+                    <DataGridTextColumn Header="Сума" Binding="{Binding Total, StringFormat={}{0:0} грн}" Width="140"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

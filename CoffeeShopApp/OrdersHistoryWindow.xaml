@@ -37,8 +37,8 @@
                     <DataGridTextColumn Header="№" Binding="{Binding Id}" Width="80"/>
                     <DataGridTextColumn Header="Дата" Binding="{Binding Date}" Width="180"/>
                     <DataGridTextColumn Header="Позицій" Binding="{Binding ItemsCount}" Width="110"/>
-                    <DataGridTextColumn Header="Товарів" Binding="{Binding Products}" Width="*"/>
-                    <DataGridTextColumn Header="Сума" Binding="{Binding Total, StringFormat={}{0:0} ₴}" Width="130"/>
+                    <DataGridTextColumn Header="Товари" Binding="{Binding Products}" Width="*"/>
+                    <DataGridTextColumn Header="Сума" Binding="{Binding Total, StringFormat={}{0:0} грн}" Width="130"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

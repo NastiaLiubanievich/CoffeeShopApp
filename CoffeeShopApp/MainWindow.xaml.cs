@@ -27,6 +27,8 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
+        _context.Database.Migrate();
+
         if (CartList is not null)
         {
             CartList.ItemsSource = _cart;
@@ -232,6 +234,13 @@ public partial class MainWindow : Window
         activeButton.Foreground = Brushes.White;
     }
 
+    private void MenuButton_Click(object sender, RoutedEventArgs e)
+    {
+        _selectedCategoryId = 0;
+        _searchText = string.Empty;
+        ApplyFilters();
+    }
+
     private void ProductsButton_Click(object sender, RoutedEventArgs e)
     {
         new ProductsWindow().ShowDialog();
@@ -296,7 +305,6 @@ public sealed class ProductCardViewModel
     public ProductCardViewModel(Product product)
     {
         Product = product;
-        PhotoBrush = ProductVisuals.GetBrush(product.CategoryId);
         AccentBrush = product.Id == 9
             ? new SolidColorBrush(Color.FromRgb(154, 100, 45))
             : new SolidColorBrush(Color.FromRgb(231, 222, 210));
@@ -304,7 +312,6 @@ public sealed class ProductCardViewModel
     }
 
     public Product Product { get; }
-    public Brush PhotoBrush { get; }
     public Brush AccentBrush { get; }
     public Thickness AccentThickness { get; }
 }
@@ -314,57 +321,9 @@ public sealed class CartItemViewModel
     public CartItemViewModel(Product product)
     {
         Product = product;
-        PhotoBrush = ProductVisuals.GetBrush(product.CategoryId);
     }
 
     public Product Product { get; }
     public int Quantity { get; set; } = 1;
     public decimal LineTotal => Product.Price * Quantity;
-    public Brush PhotoBrush { get; }
-}
-
-public static class ProductVisuals
-{
-    public static Brush GetBrush(int categoryId)
-    {
-        var brush = new LinearGradientBrush
-        {
-            StartPoint = new Point(0, 0),
-            EndPoint = new Point(1, 1)
-        };
-
-        switch (categoryId)
-        {
-            case 1:
-                brush.GradientStops.Add(new GradientStop(Color.FromRgb(220, 188, 141), 0));
-                brush.GradientStops.Add(new GradientStop(Color.FromRgb(105, 66, 33), 1));
-                break;
-            case 2:
-                brush.GradientStops.Add(new GradientStop(Color.FromRgb(238, 218, 154), 0));
-                brush.GradientStops.Add(new GradientStop(Color.FromRgb(184, 93, 31), 1));
-                break;
-            case 3:
-                brush.GradientStops.Add(new GradientStop(Color.FromRgb(242, 224, 186), 0));
-                brush.GradientStops.Add(new GradientStop(Color.FromRgb(157, 105, 54), 1));
-                break;
-            case 4:
-                brush.GradientStops.Add(new GradientStop(Color.FromRgb(238, 213, 160), 0));
-                brush.GradientStops.Add(new GradientStop(Color.FromRgb(83, 109, 74), 1));
-                break;
-            case 5:
-                brush.GradientStops.Add(new GradientStop(Color.FromRgb(244, 208, 147), 0));
-                brush.GradientStops.Add(new GradientStop(Color.FromRgb(164, 86, 28), 1));
-                break;
-            case 6:
-                brush.GradientStops.Add(new GradientStop(Color.FromRgb(245, 218, 214), 0));
-                brush.GradientStops.Add(new GradientStop(Color.FromRgb(132, 42, 48), 1));
-                break;
-            default:
-                brush.GradientStops.Add(new GradientStop(Color.FromRgb(230, 218, 205), 0));
-                brush.GradientStops.Add(new GradientStop(Color.FromRgb(92, 72, 51), 1));
-                break;
-        }
-
-        return brush;
-    }
 }

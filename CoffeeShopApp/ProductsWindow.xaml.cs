@@ -24,6 +24,7 @@ public partial class ProductsWindow : Window
             {
                 product.Id,
                 product.Name,
+                product.ImagePath,
                 Category = product.Category.Name,
                 product.Description,
                 product.Price,

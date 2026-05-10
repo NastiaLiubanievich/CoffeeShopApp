@@ -21,4 +21,8 @@
     <Folder Include="Services\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="Assets\Products\*.png" />
+  </ItemGroup>
+
 </Project>
