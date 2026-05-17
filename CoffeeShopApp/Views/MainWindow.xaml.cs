@@ -30,6 +30,7 @@ public partial class MainWindow : Window
     private TextBlock? TodayText => FindName("TodayTextBlock") as TextBlock;
     private TextBlock? TimeText => FindName("TimeTextBlock") as TextBlock;
     private TextBlock? FooterUserText => FindName("FooterUserTextBlock") as TextBlock;
+    private TextBlock? SearchPlaceholderText => FindName("SearchPlaceholderTextBlock") as TextBlock;
 
     public MainWindow()
     {
@@ -255,6 +256,12 @@ public partial class MainWindow : Window
         if (sender is TextBox textBox)
         {
             _searchText = textBox.Text.Trim();
+            if (SearchPlaceholderText is not null)
+            {
+                SearchPlaceholderText.Visibility = string.IsNullOrWhiteSpace(textBox.Text)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
         }
 
         ApplyFilters();

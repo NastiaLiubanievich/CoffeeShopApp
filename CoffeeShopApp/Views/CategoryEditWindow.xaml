@@ -1,0 +1,64 @@
+<Window x:Class="CoffeeShopApp.CategoryEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Категорія"
+        Width="540"
+        Height="430"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#F8F6F2">
+    <Grid Margin="34">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Margin="0,0,0,28">
+            <TextBlock x:Name="TitleTextBlock"
+                       Text="Додати категорію"
+                       FontSize="26"
+                       FontWeight="Bold"
+                       Foreground="#17120E"/>
+            <TextBlock Text="Заповніть назву та фото для картки"
+                       Foreground="#6E6256"
+                       Margin="0,6,0,0"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1">
+            <TextBlock Text="Назва категорії" Foreground="#6E6256"/>
+            <TextBox x:Name="NameTextBox"
+                     Height="42"
+                     Margin="0,8,0,22"
+                     VerticalContentAlignment="Center"/>
+
+            <TextBlock Text="Шлях до фото" Foreground="#6E6256"/>
+            <TextBox x:Name="ImagePathTextBox"
+                     Height="42"
+                     Margin="0,8,0,12"
+                     VerticalContentAlignment="Center"/>
+
+            <TextBlock Text="Наприклад: Assets/Products/Капучино.png"
+                       FontSize="12"
+                       Foreground="#9A8F84"/>
+        </StackPanel>
+
+        <Grid Grid.Row="2" Margin="0,28,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Content="Скасувати"
+                    Height="50"
+                    Margin="0,0,10,0"
+                    Style="{StaticResource GhostButtonStyle}"
+                    Click="CancelButton_Click"/>
+            <Button Grid.Column="1"
+                    Content="Зберегти"
+                    Height="50"
+                    Margin="10,0,0,0"
+                    Click="SaveButton_Click"/>
+        </Grid>
+    </Grid>
+</Window>

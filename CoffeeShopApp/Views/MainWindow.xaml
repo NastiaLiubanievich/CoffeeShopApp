@@ -274,11 +274,18 @@
                     <TextBlock Text="Оберіть товари для замовлення" Foreground="#5F5850" Margin="0,4,0,0"/>
                 </StackPanel>
 
-                <TextBox Grid.Column="1"
-                         Height="42"
-                         Margin="0,4,14,0"
-                         VerticalContentAlignment="Center"
-                         TextChanged="SearchTextBox_TextChanged"/>
+                <Grid Grid.Column="1" Margin="0,4,14,0">
+                    <TextBox x:Name="SearchTextBox"
+                             Height="42"
+                             VerticalContentAlignment="Center"
+                             TextChanged="SearchTextBox_TextChanged"/>
+                    <TextBlock x:Name="SearchPlaceholderTextBlock"
+                               Text="Пошук товарів..."
+                               Foreground="#9A8F84"
+                               Margin="16,0,0,0"
+                               VerticalAlignment="Center"
+                               IsHitTestVisible="False"/>
+                </Grid>
                 <Button Grid.Column="2" Content="Фільтр" Height="42" Margin="0,4,0,0"/>
             </Grid>
 

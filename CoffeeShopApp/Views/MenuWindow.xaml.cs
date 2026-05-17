@@ -71,6 +71,9 @@ public partial class MenuWindow : Window
 
     private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
+        SearchPlaceholderTextBlock.Visibility = string.IsNullOrWhiteSpace(SearchTextBox.Text)
+            ? Visibility.Visible
+            : Visibility.Collapsed;
         ApplySearch();
     }
 

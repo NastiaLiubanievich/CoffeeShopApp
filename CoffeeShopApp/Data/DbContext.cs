@@ -20,12 +20,12 @@ public class CoffeeShopDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Category>().HasData(
-            new Category { Id = 1, Name = "Кава" },
-            new Category { Id = 2, Name = "Гарячі напої" },
-            new Category { Id = 4, Name = "Сендвічі та перекуси" },
-            new Category { Id = 5, Name = "Випічка" },
-            new Category { Id = 6, Name = "Десерти" },
-            new Category { Id = 7, Name = "Холодні напої" }
+            new Category { Id = 1, Name = "Кава", ImagePath = "Assets/Products/Капучино.png" },
+            new Category { Id = 2, Name = "Гарячі напої", ImagePath = "Assets/Products/Какао.png" },
+            new Category { Id = 4, Name = "Сендвічі та перекуси", ImagePath = "Assets/Products/Сендвіч з куркою.png" },
+            new Category { Id = 5, Name = "Випічка", ImagePath = "Assets/Products/Круасан.png" },
+            new Category { Id = 6, Name = "Десерти", ImagePath = "Assets/Products/Чізкейк.png" },
+            new Category { Id = 7, Name = "Холодні напої", ImagePath = "Assets/Products/Колд брю.png" }
         );
 
         var seedDate = new DateTime(2025, 1, 1);
