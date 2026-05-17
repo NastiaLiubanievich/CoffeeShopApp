@@ -24,7 +24,7 @@ public partial class ProductsWindow : Window
             {
                 product.Id,
                 product.Name,
-                product.ImagePath,
+                ImageSource = ProductImageProvider.GetImageSource(product),
                 Category = product.Category.Name,
                 product.Description,
                 product.Price,

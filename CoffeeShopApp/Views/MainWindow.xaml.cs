@@ -1,10 +1,14 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using CoffeeShopApp.Data;
 using CoffeeShopApp.Models;
+using CoffeeShopApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShopApp;
@@ -14,6 +18,7 @@ public partial class MainWindow : Window
     private readonly CoffeeShopDbContext _context = new();
     private readonly List<Product> _products = new();
     private readonly ObservableCollection<CartItemViewModel> _cart = new();
+    private readonly DispatcherTimer _clockTimer = new();
 
     private int _selectedCategoryId;
     private string _searchText = string.Empty;
@@ -22,20 +27,45 @@ public partial class MainWindow : Window
     private ItemsControl? ProductsControl => FindName("ProductsItemsControl") as ItemsControl;
     private TextBlock? TotalText => FindName("TotalTextBlock") as TextBlock;
     private TextBlock? ItemsCountText => FindName("ItemsCountTextBlock") as TextBlock;
+    private TextBlock? TodayText => FindName("TodayTextBlock") as TextBlock;
+    private TextBlock? TimeText => FindName("TimeTextBlock") as TextBlock;
 
     public MainWindow()
     {
         InitializeComponent();
-
-        _context.Database.Migrate();
+        Title = $"CoffeeShop - {App.CurrentUserName}";
 
         if (CartList is not null)
         {
             CartList.ItemsSource = _cart;
         }
 
+        StartClock();
         LoadProducts();
         RefreshCart();
+    }
+
+    private void StartClock()
+    {
+        UpdateClock();
+        _clockTimer.Interval = TimeSpan.FromSeconds(1);
+        _clockTimer.Tick += (_, _) => UpdateClock();
+        _clockTimer.Start();
+    }
+
+    private void UpdateClock()
+    {
+        var now = DateTime.Now;
+
+        if (TodayText is not null)
+        {
+            TodayText.Text = now.ToString("d MMMM yyyy", new CultureInfo("uk-UA"));
+        }
+
+        if (TimeText is not null)
+        {
+            TimeText.Text = now.ToString("HH:mm");
+        }
     }
 
     private void LoadProducts()
@@ -185,7 +215,10 @@ public partial class MainWindow : Window
 
         _context.SaveChanges();
 
-        MessageBox.Show("Замовлення збережено!", "CoffeeShop", MessageBoxButton.OK, MessageBoxImage.Information);
+        if (AppSettings.ShowOrderConfirmation)
+        {
+            MessageBox.Show("Замовлення збережено!", "CoffeeShop", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
 
         _cart.Clear();
         RefreshCart();
@@ -234,37 +267,92 @@ public partial class MainWindow : Window
         activeButton.Foreground = Brushes.White;
     }
 
+    private void NavButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button)
+        {
+            SetActiveNavButton(button);
+        }
+    }
+
     private void MenuButton_Click(object sender, RoutedEventArgs e)
     {
+        if (sender is Button button)
+        {
+            SetActiveNavButton(button);
+        }
+
         _selectedCategoryId = 0;
         _searchText = string.Empty;
         ApplyFilters();
     }
 
+    private void SetActiveNavButton(Button activeButton)
+    {
+        if (activeButton.Parent is not Panel panel)
+        {
+            return;
+        }
+
+        foreach (var button in panel.Children.OfType<Button>())
+        {
+            button.Background = Brushes.Transparent;
+            button.Foreground = Brushes.White;
+        }
+
+        activeButton.Background = new SolidColorBrush(Color.FromRgb(185, 155, 119));
+        activeButton.Foreground = Brushes.White;
+    }
+
     private void ProductsButton_Click(object sender, RoutedEventArgs e)
     {
+        if (sender is Button button)
+        {
+            SetActiveNavButton(button);
+        }
+
         new ProductsWindow().ShowDialog();
         LoadProducts();
     }
 
     private void CategoriesButton_Click(object sender, RoutedEventArgs e)
     {
+        if (sender is Button button)
+        {
+            SetActiveNavButton(button);
+        }
+
         new CategoriesWindow().ShowDialog();
         LoadProducts();
     }
 
     private void OrdersHistoryButton_Click(object sender, RoutedEventArgs e)
     {
+        if (sender is Button button)
+        {
+            SetActiveNavButton(button);
+        }
+
         new OrdersHistoryWindow().ShowDialog();
     }
 
     private void ReportsButton_Click(object sender, RoutedEventArgs e)
     {
+        if (sender is Button button)
+        {
+            SetActiveNavButton(button);
+        }
+
         new ReportsWindow().ShowDialog();
     }
 
     private void SettingsButton_Click(object sender, RoutedEventArgs e)
     {
+        if (sender is Button button)
+        {
+            SetActiveNavButton(button);
+        }
+
         new SettingsWindow().ShowDialog();
     }
 
@@ -305,13 +393,13 @@ public sealed class ProductCardViewModel
     public ProductCardViewModel(Product product)
     {
         Product = product;
-        AccentBrush = product.Id == 9
-            ? new SolidColorBrush(Color.FromRgb(154, 100, 45))
-            : new SolidColorBrush(Color.FromRgb(231, 222, 210));
-        AccentThickness = product.Id == 9 ? new Thickness(1.5) : new Thickness(1);
+        ImageSource = ProductImageProvider.GetImageSource(product);
+        AccentBrush = new SolidColorBrush(Color.FromRgb(231, 222, 210));
+        AccentThickness = new Thickness(1);
     }
 
     public Product Product { get; }
+    public BitmapImage ImageSource { get; }
     public Brush AccentBrush { get; }
     public Thickness AccentThickness { get; }
 }
@@ -321,9 +409,73 @@ public sealed class CartItemViewModel
     public CartItemViewModel(Product product)
     {
         Product = product;
+        ImageSource = ProductImageProvider.GetImageSource(product);
     }
 
     public Product Product { get; }
+    public BitmapImage ImageSource { get; }
     public int Quantity { get; set; } = 1;
     public decimal LineTotal => Product.Price * Quantity;
+}
+
+public static class ProductImageProvider
+{
+    public static BitmapImage GetImageSource(Product product)
+    {
+        var productImageName = GetProductImageName(product);
+        var imagePaths = new[]
+        {
+            product.ImagePath,
+            $"Assets/Products/{product.Name}.png",
+            $"Assets/Products/{productImageName}.png",
+            "Assets/Products/Еспресо.png"
+        };
+
+        foreach (var imagePath in imagePaths.Where(path => !string.IsNullOrWhiteSpace(path)).Distinct())
+        {
+            var image = LoadImage(imagePath);
+            if (image is not null)
+            {
+                return image;
+            }
+        }
+
+        return new BitmapImage();
+    }
+
+    private static string GetProductImageName(Product product)
+    {
+        return product.Id switch
+        {
+            6 => "Флет вайт",
+            7 => "Раф",
+            10 => "Еспресо тонік",
+            14 => "Чорний чай",
+            24 => "Сінабон",
+            32 => "Айс матча лате",
+            _ => product.Name
+        };
+    }
+
+    private static BitmapImage? LoadImage(string imagePath)
+    {
+        try
+        {
+            var cleanPath = imagePath.Replace("\\", "/").TrimStart('/');
+            var uri = new Uri($"pack://application:,,,/{cleanPath}", UriKind.Absolute);
+
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.UriSource = uri;
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.EndInit();
+            image.Freeze();
+
+            return image;
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }

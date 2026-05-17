@@ -18,11 +18,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Assets\Brand\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\Products\*.png" />
+    <Resource Include="Assets\Brand\*.png" />
   </ItemGroup>
 
 </Project>

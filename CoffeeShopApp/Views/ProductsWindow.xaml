@@ -39,7 +39,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Border Width="64" Height="48" CornerRadius="6" ClipToBounds="True">
-                                    <Image Source="{Binding ImagePath}" Stretch="UniformToFill"/>
+                                    <Image Source="{Binding ImageSource}" Stretch="UniformToFill"/>
                                 </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
