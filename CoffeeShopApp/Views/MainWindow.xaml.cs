@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -207,7 +208,8 @@ public partial class MainWindow : Window
         var order = new Order
         {
             OrderDate = DateTime.Now,
-            TotalAmount = _cart.Sum(item => item.LineTotal)
+            TotalAmount = _cart.Sum(item => item.LineTotal),
+            Status = "Виконано"
         };
 
         _context.Orders.Add(order);
@@ -442,6 +444,9 @@ public static class ProductImageProvider
         var imagePaths = new[]
         {
             product.ImagePath,
+            string.IsNullOrWhiteSpace(product.ImagePath) || product.ImagePath.Contains('/') || product.ImagePath.Contains('\\')
+                ? string.Empty
+                : $"Assets/Products/{product.ImagePath}",
             $"Assets/Products/{product.Name}.png",
             $"Assets/Products/{productImageName}.png",
             "Assets/Products/Еспресо.png"
@@ -478,20 +483,77 @@ public static class ProductImageProvider
         try
         {
             var cleanPath = imagePath.Replace("\\", "/").TrimStart('/');
+            var fileImage = LoadFileImage(imagePath, cleanPath);
+            if (fileImage is not null)
+            {
+                return fileImage;
+            }
+
             var uri = new Uri($"pack://application:,,,/{cleanPath}", UriKind.Absolute);
-
-            var image = new BitmapImage();
-            image.BeginInit();
-            image.UriSource = uri;
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.EndInit();
-            image.Freeze();
-
-            return image;
+            return CreateBitmapImage(uri);
         }
         catch
         {
             return null;
         }
+    }
+
+    private static BitmapImage? LoadFileImage(string originalPath, string cleanPath)
+    {
+        var possiblePaths = new List<string>();
+
+        if (Path.IsPathRooted(originalPath))
+        {
+            possiblePaths.Add(originalPath);
+        }
+
+        var projectDirectory = FindProjectDirectory();
+        if (projectDirectory is not null)
+        {
+            possiblePaths.Add(Path.Combine(projectDirectory, cleanPath.Replace("/", Path.DirectorySeparatorChar.ToString())));
+        }
+
+        possiblePaths.Add(Path.Combine(AppContext.BaseDirectory, cleanPath.Replace("/", Path.DirectorySeparatorChar.ToString())));
+
+        foreach (var possiblePath in possiblePaths.Distinct())
+        {
+            if (!File.Exists(possiblePath))
+            {
+                continue;
+            }
+
+            return CreateBitmapImage(new Uri(possiblePath, UriKind.Absolute));
+        }
+
+        return null;
+    }
+
+    private static string? FindProjectDirectory()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (directory is not null)
+        {
+            if (File.Exists(Path.Combine(directory.FullName, "CoffeeShopApp.csproj")))
+            {
+                return directory.FullName;
+            }
+
+            directory = directory.Parent;
+        }
+
+        return null;
+    }
+
+    private static BitmapImage CreateBitmapImage(Uri uri)
+    {
+        var image = new BitmapImage();
+        image.BeginInit();
+        image.UriSource = uri;
+        image.CacheOption = BitmapCacheOption.OnLoad;
+        image.EndInit();
+        image.Freeze();
+
+        return image;
     }
 }
