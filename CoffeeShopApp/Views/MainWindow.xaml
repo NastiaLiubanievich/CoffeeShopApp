@@ -11,19 +11,13 @@
 
     <Window.Resources>
         <Style x:Key="CategoryButtonStyle" TargetType="Button" BasedOn="{StaticResource GhostButtonStyle}">
-            <Setter Property="Height" Value="42"/>
-            <Setter Property="MinWidth" Value="110"/>
-            <Setter Property="Margin" Value="0,0,12,0"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Width" Value="110"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="BorderBrush" Value="#E7DED2"/>
             <Setter Property="BorderThickness" Value="1"/>
-        </Style>
-
-        <Style x:Key="TopIconButtonStyle" TargetType="Button" BasedOn="{StaticResource GhostButtonStyle}">
-            <Setter Property="Visibility" Value="Collapsed"/>
-            <Setter Property="Width" Value="0"/>
-            <Setter Property="Height" Value="0"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="Margin" Value="0"/>
         </Style>
 
         <DataTemplate x:Key="ProductCardTemplate">
@@ -181,14 +175,14 @@
         <Border Grid.RowSpan="3" Grid.Column="0" Background="#332719">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="228"/>
+                    <RowDefinition Height="210"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="158"/>
+                    <RowDefinition Height="142"/>
                 </Grid.RowDefinitions>
 
                 <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Margin="18">
+                            Margin="8">
                     <Image Source="pack://application:,,,/Assets/Brand/Logo.png"
                            Width="173"
                            Height="132"
@@ -196,8 +190,8 @@
                     <TextBlock Text="COFFEE"
                                FontSize="24"
                                Foreground="#E0AE65"
-                               FontWeight="SemiBold" RenderTransformOrigin="0.519,0.66" Width="86"
-                               />
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center"/>
                     <TextBlock Text="SHOP"
                                FontSize="24"
                                Foreground="#E0AE65"
@@ -205,7 +199,7 @@
                                HorizontalAlignment="Center"/>
                 </StackPanel>
 
-                <StackPanel Grid.Row="1" Margin="12,12">
+                <StackPanel Grid.Row="1" Margin="10,24,10,12">
                     <Button Style="{StaticResource NavButtonStyle}" Content="Замовлення" Click="NavButton_Click" Background="#B99B77"/>
                     <Button Style="{StaticResource NavButtonStyle}" Content="Меню" Click="MenuButton_Click"/>
                     <Button Style="{StaticResource NavButtonStyle}" Content="Категорії" Click="CategoriesButton_Click"/>
@@ -216,12 +210,12 @@
                 </StackPanel>
 
                 <Border Grid.Row="2"
-                        Margin="14,0,14,22"
+                        Margin="12,0,12,18"
                         BorderBrush="#5B4A36"
                         BorderThickness="1"
                         CornerRadius="8"
                         Background="#3C2D1E">
-                    <Grid Margin="18,14">
+                    <Grid Margin="18,12">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="1"/>
@@ -245,16 +239,19 @@
                 Background="#FCFAF7"
                 BorderBrush="#E3DCD3"
                 BorderThickness="0,0,0,1">
-            <Grid Margin="24,0">
+            <Grid Margin="24,0" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="☰" FontSize="18" Foreground="#3B2C1D" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="2" Text="Адміністратор" Foreground="#4C4034" VerticalAlignment="Center" Margin="0,0,24,0"/>
-                <Button Grid.Column="4" Style="{StaticResource TopIconButtonStyle}" Content="□" Click="MaximizeButton_Click"/>
-                <Button Grid.Column="5" Style="{StaticResource TopIconButtonStyle}" Content="×" Click="CloseButton_Click"/>
+                <TextBlock x:Name="HeaderUserTextBlock"
+                           Grid.Column="2"
+                           Text="Адміністратор"
+                           Foreground="#4C4034"
+                           VerticalAlignment="Center"
+                           Margin="0,0,24,0"/>
             </Grid>
         </Border>
 
@@ -292,8 +289,18 @@
                 <StackPanel Orientation="Horizontal">
                     <Button Style="{StaticResource CategoryButtonStyle}" Content="Усі" Tag="0" Background="#3B2C1D" Foreground="White" Click="CategoryButton_Click"/>
                     <Button Style="{StaticResource CategoryButtonStyle}" Content="Кава" Tag="1" Click="CategoryButton_Click"/>
-                    <Button Style="{StaticResource CategoryButtonStyle}" Content="Гарячі напої" Tag="2" Click="CategoryButton_Click"/>
-                    <Button Style="{StaticResource CategoryButtonStyle}" Content="Холодні напої" Tag="7" Click="CategoryButton_Click"/>
+                    <Button Style="{StaticResource CategoryButtonStyle}" Tag="2" Click="CategoryButton_Click">
+                        <StackPanel>
+                            <TextBlock Text="Гарячі" HorizontalAlignment="Center"/>
+                            <TextBlock Text="напої" HorizontalAlignment="Center" Margin="0,1,0,0"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource CategoryButtonStyle}" Tag="7" Click="CategoryButton_Click">
+                        <StackPanel>
+                            <TextBlock Text="Холодні" HorizontalAlignment="Center"/>
+                            <TextBlock Text="напої" HorizontalAlignment="Center" Margin="0,1,0,0"/>
+                        </StackPanel>
+                    </Button>
                     <Button Style="{StaticResource CategoryButtonStyle}" Content="Перекуси" Tag="4" Click="CategoryButton_Click"/>
                     <Button Style="{StaticResource CategoryButtonStyle}" Content="Випічка" Tag="5" Click="CategoryButton_Click"/>
                     <Button Style="{StaticResource CategoryButtonStyle}" Content="Десерти" Tag="6" Click="CategoryButton_Click"/>
@@ -324,12 +331,15 @@
                     <RowDefinition Height="78"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="112"/>
-                    <RowDefinition Height="150"/>
+                    <RowDefinition Height="170"/>
                 </Grid.RowDefinitions>
 
                 <DockPanel Margin="20,0">
-                    <TextBlock Text="Поточне замовлення" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Foreground="#17120E"/>
-                    <Button DockPanel.Dock="Right" Content="X" Width="36" Height="36" Padding="0" Background="#F2EEE8" Foreground="#9A642D" Click="ClearCartButton_Click"/>
+                    <TextBlock Text="Поточне замовлення"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"
+                               Foreground="#17120E"/>
                 </DockPanel>
 
                 <ListBox x:Name="CartListBox"
@@ -357,14 +367,34 @@
                             <TextBlock Text="Разом:" FontSize="18" FontWeight="Bold" Foreground="#17120E"/>
                             <TextBlock x:Name="ItemsCountTextBlock" Text="Кількість позицій: 0" Foreground="#6E6256" Margin="0,8,0,0"/>
                         </StackPanel>
-                        <TextBlock x:Name="TotalTextBlock" Grid.Column="1" Text="0 грн" FontSize="26" FontWeight="Bold" Foreground="#17120E" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TotalTextBlock"
+                                   Grid.Column="1"
+                                   Text="0 грн"
+                                   FontSize="26"
+                                   FontWeight="Bold"
+                                   Foreground="#17120E"
+                                   VerticalAlignment="Center"/>
                     </Grid>
                 </Border>
 
-                <StackPanel Grid.Row="3" Margin="20,18">
-                    <Button Content="Оформити замовлення" Height="54" FontSize="15" Click="SaveOrderButton_Click"/>
-                    <Button Content="Очистити замовлення" Height="54" Margin="0,16,0,0" Style="{StaticResource GhostButtonStyle}" Click="ClearCartButton_Click"/>
-                </StackPanel>
+                <Grid Grid.Row="3" Margin="20,18">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="54"/>
+                        <RowDefinition Height="16"/>
+                        <RowDefinition Height="54"/>
+                    </Grid.RowDefinitions>
+                    <Button Content="Оформити замовлення"
+                            Height="54"
+                            FontSize="15"
+                            HorizontalAlignment="Stretch"
+                            Click="SaveOrderButton_Click"/>
+                    <Button Grid.Row="2"
+                            Content="Очистити замовлення"
+                            Height="54"
+                            Style="{StaticResource GhostButtonStyle}"
+                            HorizontalAlignment="Stretch"
+                            Click="ClearCartButton_Click"/>
+                </Grid>
             </Grid>
         </Border>
 
@@ -377,7 +407,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="CoffeeShop System v1.0.0" Foreground="#6E6256" VerticalAlignment="Center"/>
                 <TextBlock Grid.Column="1" Text="●  Підключено до бази даних" Foreground="#4FA35D" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="2" Text="Користувач: Адміністратор" Foreground="#6E6256" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <TextBlock x:Name="FooterUserTextBlock" Grid.Column="2" Text="Користувач: Адміністратор" Foreground="#6E6256" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             </Grid>
         </Border>
     </Grid>

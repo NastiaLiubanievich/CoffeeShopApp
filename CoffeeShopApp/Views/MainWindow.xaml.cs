@@ -29,11 +29,13 @@ public partial class MainWindow : Window
     private TextBlock? ItemsCountText => FindName("ItemsCountTextBlock") as TextBlock;
     private TextBlock? TodayText => FindName("TodayTextBlock") as TextBlock;
     private TextBlock? TimeText => FindName("TimeTextBlock") as TextBlock;
+    private TextBlock? FooterUserText => FindName("FooterUserTextBlock") as TextBlock;
 
     public MainWindow()
     {
         InitializeComponent();
         Title = $"CoffeeShop - {App.CurrentUserName}";
+        UpdateCurrentUserText();
 
         if (CartList is not null)
         {
@@ -51,6 +53,14 @@ public partial class MainWindow : Window
         _clockTimer.Interval = TimeSpan.FromSeconds(1);
         _clockTimer.Tick += (_, _) => UpdateClock();
         _clockTimer.Start();
+    }
+
+    private void UpdateCurrentUserText()
+    {
+        if (FooterUserText is not null)
+        {
+            FooterUserText.Text = $"Користувач: {App.CurrentUserName}";
+        }
     }
 
     private void UpdateClock()
@@ -282,9 +292,8 @@ public partial class MainWindow : Window
             SetActiveNavButton(button);
         }
 
-        _selectedCategoryId = 0;
-        _searchText = string.Empty;
-        ApplyFilters();
+        new MenuWindow { Owner = this }.ShowDialog();
+        LoadProducts();
     }
 
     private void SetActiveNavButton(Button activeButton)
