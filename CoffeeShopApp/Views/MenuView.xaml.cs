@@ -8,13 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShopApp;
 
-public partial class MenuWindow : Window
+public partial class MenuView : UserControl
 {
     private readonly CoffeeShopDbContext _context = new();
-    private readonly List<MenuProductViewModel> _products = new();
+    private readonly List<MenuProductViewModel> _products = [];
     private int? _editingProductId;
 
-    public MenuWindow()
+    public MenuView()
     {
         InitializeComponent();
         LoadCategories();
@@ -24,10 +24,7 @@ public partial class MenuWindow : Window
 
     private void LoadCategories()
     {
-        CategoryComboBox.ItemsSource = _context.Categories
-            .AsNoTracking()
-            .OrderBy(category => category.Id)
-            .ToList();
+        CategoryComboBox.ItemsSource = _context.Categories.AsNoTracking().OrderBy(category => category.Id).ToList();
     }
 
     private void LoadProducts()
@@ -85,20 +82,12 @@ public partial class MenuWindow : Window
         }
     }
 
-    private void AddNewButton_Click(object sender, RoutedEventArgs e)
-    {
-        ClearForm();
-    }
-
     private void EditButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is Button { Tag: int productId })
+        if (sender is Button { Tag: int productId } &&
+            _products.FirstOrDefault(item => item.Id == productId) is { } product)
         {
-            var product = _products.FirstOrDefault(item => item.Id == productId);
-            if (product is not null)
-            {
-                FillForm(product);
-            }
+            FillForm(product);
         }
     }
 
@@ -115,13 +104,7 @@ public partial class MenuWindow : Window
             return;
         }
 
-        var result = MessageBox.Show(
-            $"Видалити товар \"{product.Name}\"?",
-            "Меню",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Question);
-
-        if (result != MessageBoxResult.Yes)
+        if (MessageBox.Show($"Видалити товар \"{product.Name}\"?", "Меню", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
         {
             return;
         }
@@ -142,10 +125,7 @@ public partial class MenuWindow : Window
         Product product;
         if (_editingProductId is null)
         {
-            product = new Product
-            {
-                CreatedAt = DateTime.Now
-            };
+            product = new Product { CreatedAt = DateTime.Now };
             _context.Products.Add(product);
         }
         else
@@ -165,13 +145,7 @@ public partial class MenuWindow : Window
         ClearForm();
     }
 
-    private bool TryReadForm(
-        out string name,
-        out string description,
-        out decimal price,
-        out int categoryId,
-        out string imagePath,
-        out bool isAvailable)
+    private bool TryReadForm(out string name, out string description, out decimal price, out int categoryId, out string imagePath, out bool isAvailable)
     {
         name = NameTextBox.Text.Trim();
         description = DescriptionTextBox.Text.Trim();

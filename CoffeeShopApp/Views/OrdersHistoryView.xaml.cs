@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShopApp;
 
-public partial class OrdersHistoryWindow : Window
+public partial class OrdersHistoryView : UserControl
 {
     private const string CompletedStatus = "Виконано";
     private const string CanceledStatus = "Скасовано";
@@ -14,7 +14,7 @@ public partial class OrdersHistoryWindow : Window
     private readonly CoffeeShopDbContext _context = new();
     private string _selectedStatus = CompletedStatus;
 
-    public OrdersHistoryWindow()
+    public OrdersHistoryView()
     {
         InitializeComponent();
         LoadOrders();
@@ -22,22 +22,17 @@ public partial class OrdersHistoryWindow : Window
 
     private void LoadOrders()
     {
-        var orders = _context.Orders
+        OrdersItemsControl.ItemsSource = _context.Orders
             .AsNoTracking()
             .Include(order => order.Items)
             .ThenInclude(item => item.Product)
             .Where(order => order.Status == _selectedStatus)
             .OrderByDescending(order => order.OrderDate)
-            .ToList();
-
-        OrdersItemsControl.ItemsSource = orders
             .Select(order => new OrderHistoryRowViewModel
             {
                 Id = order.Id,
                 Date = order.OrderDate.ToString("dd.MM.yyyy HH:mm"),
-                Products = order.Items.Count == 0
-                    ? "Без позицій"
-                    : string.Join(", ", order.Items.Select(item => $"{item.Product.Name} x{item.Quantity}")),
+                Products = order.Items.Count == 0 ? "Без позицій" : string.Join(", ", order.Items.Select(item => $"{item.Product.Name} x{item.Quantity}")),
                 Total = order.TotalAmount,
                 Status = order.Status
             })
@@ -82,11 +77,7 @@ public partial class OrdersHistoryWindow : Window
             : string.Join("\n", order.Items.Select(item => $"{item.Product.Name} x{item.Quantity} - {item.Price * item.Quantity:0} грн"));
 
         MessageBox.Show(
-            $"Замовлення #{order.Id:0000}\n" +
-            $"Дата: {order.OrderDate:dd.MM.yyyy HH:mm}\n" +
-            $"Статус: {order.Status}\n\n" +
-            $"{products}\n\n" +
-            $"Сума: {order.TotalAmount:0} грн",
+            $"Замовлення #{order.Id:0000}\nДата: {order.OrderDate:dd.MM.yyyy HH:mm}\nСтатус: {order.Status}\n\n{products}\n\nСума: {order.TotalAmount:0} грн",
             "Деталі замовлення",
             MessageBoxButton.OK,
             MessageBoxImage.Information);
@@ -99,13 +90,7 @@ public partial class OrdersHistoryWindow : Window
             return;
         }
 
-        var result = MessageBox.Show(
-            $"Скасувати замовлення #{orderId:0000}?",
-            "Скасування замовлення",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Question);
-
-        if (result != MessageBoxResult.Yes)
+        if (MessageBox.Show($"Скасувати замовлення #{orderId:0000}?", "Скасування замовлення", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
         {
             return;
         }
@@ -130,9 +115,7 @@ public partial class OrdersHistoryWindow : Window
 
     private static void SetFilterButtonStyle(Button button, bool isActive)
     {
-        button.Background = isActive
-            ? new SolidColorBrush(Color.FromRgb(59, 44, 29))
-            : new SolidColorBrush(Color.FromRgb(242, 238, 232));
+        button.Background = isActive ? new SolidColorBrush(Color.FromRgb(59, 44, 29)) : new SolidColorBrush(Color.FromRgb(242, 238, 232));
         button.Foreground = isActive ? Brushes.White : new SolidColorBrush(Color.FromRgb(59, 44, 29));
     }
 }

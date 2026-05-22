@@ -32,6 +32,9 @@ public partial class MainWindow : Window
     private TextBlock? TimeText => FindName("TimeTextBlock") as TextBlock;
     private TextBlock? FooterUserText => FindName("FooterUserTextBlock") as TextBlock;
     private TextBlock? SearchPlaceholderText => FindName("SearchPlaceholderTextBlock") as TextBlock;
+    private Grid? OrdersPage => FindName("OrdersPageGrid") as Grid;
+    private Border? Cart => FindName("CartPanel") as Border;
+    private ContentControl? PageContent => FindName("PageContentControl") as ContentControl;
 
     public MainWindow()
     {
@@ -292,6 +295,8 @@ public partial class MainWindow : Window
         {
             SetActiveNavButton(button);
         }
+
+        ShowOrdersPage();
     }
 
     private void MenuButton_Click(object sender, RoutedEventArgs e)
@@ -301,8 +306,7 @@ public partial class MainWindow : Window
             SetActiveNavButton(button);
         }
 
-        new MenuWindow { Owner = this }.ShowDialog();
-        LoadProducts();
+        ShowEmbeddedPage(new MenuView());
     }
 
     private void SetActiveNavButton(Button activeButton)
@@ -322,17 +326,6 @@ public partial class MainWindow : Window
         activeButton.Foreground = Brushes.White;
     }
 
-    private void ProductsButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button button)
-        {
-            SetActiveNavButton(button);
-        }
-
-        new ProductsWindow().ShowDialog();
-        LoadProducts();
-    }
-
     private void CategoriesButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is Button button)
@@ -340,8 +333,7 @@ public partial class MainWindow : Window
             SetActiveNavButton(button);
         }
 
-        new CategoriesWindow().ShowDialog();
-        LoadProducts();
+        ShowEmbeddedPage(new CategoriesView());
     }
 
     private void OrdersHistoryButton_Click(object sender, RoutedEventArgs e)
@@ -351,7 +343,7 @@ public partial class MainWindow : Window
             SetActiveNavButton(button);
         }
 
-        new OrdersHistoryWindow().ShowDialog();
+        ShowEmbeddedPage(new OrdersHistoryView());
     }
 
     private void ReportsButton_Click(object sender, RoutedEventArgs e)
@@ -361,7 +353,7 @@ public partial class MainWindow : Window
             SetActiveNavButton(button);
         }
 
-        new ReportsWindow().ShowDialog();
+        ShowEmbeddedPage(new ReportsView());
     }
 
     private void SettingsButton_Click(object sender, RoutedEventArgs e)
@@ -371,7 +363,47 @@ public partial class MainWindow : Window
             SetActiveNavButton(button);
         }
 
-        new SettingsWindow().ShowDialog();
+        ShowEmbeddedPage(new SettingsView());
+    }
+
+    private void ShowOrdersPage()
+    {
+        if (OrdersPage is not null)
+        {
+            OrdersPage.Visibility = Visibility.Visible;
+        }
+
+        if (Cart is not null)
+        {
+            Cart.Visibility = Visibility.Visible;
+        }
+
+        if (PageContent is not null)
+        {
+            PageContent.Content = null;
+            PageContent.Visibility = Visibility.Collapsed;
+        }
+
+        LoadProducts();
+    }
+
+    private void ShowEmbeddedPage(UserControl page)
+    {
+        if (OrdersPage is not null)
+        {
+            OrdersPage.Visibility = Visibility.Collapsed;
+        }
+
+        if (Cart is not null)
+        {
+            Cart.Visibility = Visibility.Collapsed;
+        }
+
+        if (PageContent is not null)
+        {
+            PageContent.Content = page;
+            PageContent.Visibility = Visibility.Visible;
+        }
     }
 
     private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

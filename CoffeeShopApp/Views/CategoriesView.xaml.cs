@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShopApp;
 
-public partial class CategoriesWindow : Window
+public partial class CategoriesView : UserControl
 {
     private readonly CoffeeShopDbContext _context = new();
 
-    public CategoriesWindow()
+    public CategoriesView()
     {
         InitializeComponent();
         LoadCategories();
@@ -36,51 +36,30 @@ public partial class CategoriesWindow : Window
 
     private static string GetShortCategoryName(string name)
     {
-        return name switch
-        {
-            "Сендвічі та перекуси" => "Перекуси",
-            _ => name
-        };
+        return name == "Сендвічі та перекуси" ? "Перекуси" : name;
     }
 
     private static BitmapImage GetCategoryImage(Category category)
     {
-        if (!string.IsNullOrWhiteSpace(category.ImagePath))
-        {
-            return ProductImageProvider.GetImageSource(new Product
+        var imagePath = !string.IsNullOrWhiteSpace(category.ImagePath)
+            ? category.ImagePath
+            : category.Id switch
             {
-                Id = 0,
-                Name = category.Name,
-                ImagePath = category.ImagePath
-            });
-        }
+                1 => "Assets/Products/Капучино.png",
+                2 => "Assets/Products/Какао.png",
+                4 => "Assets/Products/Сендвіч з куркою.png",
+                5 => "Assets/Products/Круасан.png",
+                6 => "Assets/Products/Чізкейк.png",
+                7 => "Assets/Products/Колд брю.png",
+                _ => "Assets/Products/Еспресо.png"
+            };
 
-        var imagePath = category.Id switch
-        {
-            1 => "Assets/Products/Капучино.png",
-            2 => "Assets/Products/Какао.png",
-            4 => "Assets/Products/Сендвіч з куркою.png",
-            5 => "Assets/Products/Круасан.png",
-            6 => "Assets/Products/Чізкейк.png",
-            7 => "Assets/Products/Колд брю.png",
-            _ => "Assets/Products/Еспресо.png"
-        };
-
-        return ProductImageProvider.GetImageSource(new Product
-        {
-            Id = 0,
-            Name = category.Name,
-            ImagePath = imagePath
-        });
+        return ProductImageProvider.GetImageSource(new Product { Id = 0, Name = category.Name, ImagePath = imagePath });
     }
 
     private void AddCategoryButton_Click(object sender, RoutedEventArgs e)
     {
-        var window = new CategoryEditWindow
-        {
-            Owner = this
-        };
-
+        var window = new CategoryEditWindow { Owner = Window.GetWindow(this) };
         if (window.ShowDialog() != true)
         {
             return;
@@ -89,9 +68,7 @@ public partial class CategoriesWindow : Window
         _context.Categories.Add(new Category
         {
             Name = window.CategoryName,
-            ImagePath = string.IsNullOrWhiteSpace(window.ImagePath)
-                ? "Assets/Products/Еспресо.png"
-                : window.ImagePath
+            ImagePath = string.IsNullOrWhiteSpace(window.ImagePath) ? "Assets/Products/Еспресо.png" : window.ImagePath
         });
         _context.SaveChanges();
         LoadCategories();
@@ -110,20 +87,14 @@ public partial class CategoriesWindow : Window
             return;
         }
 
-        var window = new CategoryEditWindow(category.Name, category.ImagePath)
-        {
-            Owner = this
-        };
-
+        var window = new CategoryEditWindow(category.Name, category.ImagePath) { Owner = Window.GetWindow(this) };
         if (window.ShowDialog() != true)
         {
             return;
         }
 
         category.Name = window.CategoryName;
-        category.ImagePath = string.IsNullOrWhiteSpace(window.ImagePath)
-            ? "Assets/Products/Еспресо.png"
-            : window.ImagePath;
+        category.ImagePath = string.IsNullOrWhiteSpace(window.ImagePath) ? "Assets/Products/Еспресо.png" : window.ImagePath;
         _context.SaveChanges();
         LoadCategories();
     }

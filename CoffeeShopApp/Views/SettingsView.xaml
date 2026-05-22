@@ -1,0 +1,140 @@
+<UserControl x:Class="CoffeeShopApp.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="SettingsComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Width" Value="260"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Margin="0,0,0,34">
+            <TextBlock Text="Налаштування"
+                       FontSize="34"
+                       FontWeight="Bold"
+                       Foreground="#17120E"/>
+            <TextBlock Text="Легкі налаштування системи"
+                       FontSize="16"
+                       Foreground="#6E6256"
+                       Margin="0,8,0,0"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1">
+            <Border Background="White" BorderBrush="#E7DED2" BorderThickness="1" CornerRadius="8" Padding="24" Margin="0,0,0,18">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="68"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Width="48" Height="48" Background="#F3EEE8" CornerRadius="8">
+                        <TextBlock Text="🌐" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Мова інтерфейсу" FontSize="20" FontWeight="Bold" Foreground="#17120E"/>
+                        <TextBlock Text="Оберіть мову системи" FontSize="15" Foreground="#6E6256" Margin="0,5,0,0"/>
+                    </StackPanel>
+
+                    <ComboBox x:Name="LanguageComboBox" Grid.Column="2" Style="{StaticResource SettingsComboBoxStyle}">
+                        <ComboBoxItem Content="Українська"/>
+                        <ComboBoxItem Content="English"/>
+                    </ComboBox>
+                </Grid>
+            </Border>
+
+            <Border Background="White" BorderBrush="#E7DED2" BorderThickness="1" CornerRadius="8" Padding="24" Margin="0,0,0,18">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="68"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Width="48" Height="48" Background="#F3EEE8" CornerRadius="8">
+                        <TextBlock Text="◷" FontSize="28" Foreground="#9A5A1F" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Часовий пояс" FontSize="20" FontWeight="Bold" Foreground="#17120E"/>
+                        <TextBlock Text="Оберіть ваш часовий пояс" FontSize="15" Foreground="#6E6256" Margin="0,5,0,0"/>
+                    </StackPanel>
+
+                    <ComboBox x:Name="TimeZoneComboBox" Grid.Column="2" Style="{StaticResource SettingsComboBoxStyle}">
+                        <ComboBoxItem Content="(UTC+02:00) Київ"/>
+                        <ComboBoxItem Content="(UTC+01:00) Варшава"/>
+                        <ComboBoxItem Content="(UTC+00:00) Лондон"/>
+                    </ComboBox>
+                </Grid>
+            </Border>
+
+            <Border Background="White" BorderBrush="#E7DED2" BorderThickness="1" CornerRadius="8" Padding="24" Margin="0,0,0,18">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="68"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Width="48" Height="48" Background="#F3EEE8" CornerRadius="8">
+                        <TextBlock Text="₴" FontSize="25" Foreground="#9A5A1F" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Валюта" FontSize="20" FontWeight="Bold" Foreground="#17120E"/>
+                        <TextBlock Text="Оберіть валюту для відображення цін" FontSize="15" Foreground="#6E6256" Margin="0,5,0,0"/>
+                    </StackPanel>
+
+                    <ComboBox x:Name="CurrencyComboBox" Grid.Column="2" Style="{StaticResource SettingsComboBoxStyle}">
+                        <ComboBoxItem Content="₴ Гривня"/>
+                        <ComboBoxItem Content="$ Долар"/>
+                        <ComboBoxItem Content="€ Євро"/>
+                    </ComboBox>
+                </Grid>
+            </Border>
+
+            <Border Background="White" BorderBrush="#E7DED2" BorderThickness="1" CornerRadius="8" Padding="24">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="68"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Width="48" Height="48" Background="#F3EEE8" CornerRadius="8">
+                        <TextBlock Text="◉" FontSize="24" Foreground="#9A5A1F" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Тема інтерфейсу" FontSize="20" FontWeight="Bold" Foreground="#17120E"/>
+                        <TextBlock Text="Оберіть вигляд інтерфейсу" FontSize="15" Foreground="#6E6256" Margin="0,5,0,0"/>
+                    </StackPanel>
+
+                    <ComboBox x:Name="ThemeComboBox" Grid.Column="2" Style="{StaticResource SettingsComboBoxStyle}">
+                        <ComboBoxItem Content="Світла"/>
+                        <ComboBoxItem Content="Темна"/>
+                    </ComboBox>
+                </Grid>
+            </Border>
+        </StackPanel>
+
+        <Button Grid.Row="2"
+                Content="Зберегти зміни"
+                Width="250"
+                Height="54"
+                HorizontalAlignment="Right"
+                Margin="0,28,0,0"
+                Click="SaveButton_Click"/>
+    </Grid>
+</UserControl>
