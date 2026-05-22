@@ -15,8 +15,8 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel>
-                <TextBlock Text="Історія замовлень" FontSize="30" FontWeight="Bold" Foreground="#17120E"/>
-                <TextBlock Text="Список усіх замовлень" Foreground="#6E6256" Margin="0,5,0,0"/>
+                <TextBlock x:Name="TitleTextBlock" Text="Історія замовлень" FontSize="30" FontWeight="Bold" Foreground="#17120E"/>
+                <TextBlock x:Name="SubtitleTextBlock" Text="Список усіх замовлень" Foreground="#6E6256" Margin="0,5,0,0"/>
             </StackPanel>
 
             <Button x:Name="CompletedFilterButton" Grid.Column="1" Content="Виконані" Height="42" Margin="0,4,10,0" Click="CompletedFilterButton_Click"/>
@@ -40,12 +40,12 @@
                             <ColumnDefinition Width="120"/>
                             <ColumnDefinition Width="170"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="№ замовлення" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center" Margin="16,0"/>
-                        <TextBlock Grid.Column="1" Text="Дата" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Позиції" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="3" Text="Сума" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="4" Text="Статус" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="5" Text="Дії" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="OrderNumberHeaderTextBlock" Text="№ замовлення" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center" Margin="16,0"/>
+                        <TextBlock x:Name="DateHeaderTextBlock" Grid.Column="1" Text="Дата" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ItemsHeaderTextBlock" Grid.Column="2" Text="Позиції" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TotalHeaderTextBlock" Grid.Column="3" Text="Сума" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="StatusHeaderTextBlock" Grid.Column="4" Text="Статус" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ActionsHeaderTextBlock" Grid.Column="5" Text="Дії" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Grid>
                 </Border>
 
@@ -68,11 +68,11 @@
                                         <TextBlock Grid.Column="2" Text="{Binding Products}" Foreground="#4C4034" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                                         <TextBlock Grid.Column="3" Text="{Binding TotalText}" FontWeight="SemiBold" Foreground="#17120E" VerticalAlignment="Center"/>
                                         <Border Grid.Column="4" Background="{Binding StatusBackground}" CornerRadius="10" Padding="10,4" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Status}" Foreground="{Binding StatusForeground}" FontWeight="SemiBold" FontSize="12"/>
+                                            <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusForeground}" FontWeight="SemiBold" FontSize="12"/>
                                         </Border>
                                         <StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <Button Content="Огляд" Width="58" Height="28" Padding="0" FontSize="12" Style="{StaticResource GhostButtonStyle}" Tag="{Binding Id}" Click="ViewOrderButton_Click"/>
-                                            <Button Content="Скасувати" Width="88" Height="28" Padding="0" FontSize="12" Margin="8,0,0,0" Tag="{Binding Id}" IsEnabled="{Binding CanCancel}" Click="CancelOrderButton_Click"/>
+                                            <Button Content="{Binding ViewText}" Width="58" Height="28" Padding="0" FontSize="12" Style="{StaticResource GhostButtonStyle}" Tag="{Binding Id}" Click="ViewOrderButton_Click"/>
+                                            <Button Content="{Binding CancelText}" Width="88" Height="28" Padding="0" FontSize="12" Margin="8,0,0,0" Tag="{Binding Id}" IsEnabled="{Binding CanCancel}" Click="CancelOrderButton_Click"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>

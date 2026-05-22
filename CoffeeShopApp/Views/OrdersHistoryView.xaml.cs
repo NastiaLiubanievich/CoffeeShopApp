@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using CoffeeShopApp.Data;
+using CoffeeShopApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShopApp;
@@ -17,6 +18,7 @@ public partial class OrdersHistoryView : UserControl
     public OrdersHistoryView()
     {
         InitializeComponent();
+        ApplyLanguage();
         LoadOrders();
     }
 
@@ -32,7 +34,9 @@ public partial class OrdersHistoryView : UserControl
             {
                 Id = order.Id,
                 Date = order.OrderDate.ToString("dd.MM.yyyy HH:mm"),
-                Products = order.Items.Count == 0 ? "Без позицій" : string.Join(", ", order.Items.Select(item => $"{item.Product.Name} x{item.Quantity}")),
+                Products = order.Items.Count == 0
+                    ? AppSettings.IsEnglish ? "No items" : "Без позицій"
+                    : string.Join(", ", order.Items.Select(item => $"{item.Product.Name} x{item.Quantity}")),
                 Total = order.TotalAmount,
                 Status = order.Status
             })
@@ -68,17 +72,23 @@ public partial class OrdersHistoryView : UserControl
 
         if (order is null)
         {
-            MessageBox.Show("Замовлення не знайдено.", "Історія замовлень", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(
+                AppSettings.IsEnglish ? "Order not found." : "Замовлення не знайдено.",
+                AppSettings.IsEnglish ? "Order history" : "Історія замовлень",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
             return;
         }
 
         var products = order.Items.Count == 0
-            ? "Товари не вказані"
-            : string.Join("\n", order.Items.Select(item => $"{item.Product.Name} x{item.Quantity} - {item.Price * item.Quantity:0} грн"));
+            ? AppSettings.IsEnglish ? "Products are not specified" : "Товари не вказані"
+            : string.Join("\n", order.Items.Select(item => $"{item.Product.Name} x{item.Quantity} - {AppSettings.FormatMoney(item.Price * item.Quantity)}"));
 
         MessageBox.Show(
-            $"Замовлення #{order.Id:0000}\nДата: {order.OrderDate:dd.MM.yyyy HH:mm}\nСтатус: {order.Status}\n\n{products}\n\nСума: {order.TotalAmount:0} грн",
-            "Деталі замовлення",
+            AppSettings.IsEnglish
+                ? $"Order #{order.Id:0000}\nDate: {order.OrderDate:dd.MM.yyyy HH:mm}\nStatus: {GetStatusText(order.Status)}\n\n{products}\n\nTotal: {AppSettings.FormatMoney(order.TotalAmount)}"
+                : $"Замовлення #{order.Id:0000}\nДата: {order.OrderDate:dd.MM.yyyy HH:mm}\nСтатус: {GetStatusText(order.Status)}\n\n{products}\n\nСума: {AppSettings.FormatMoney(order.TotalAmount)}",
+            AppSettings.IsEnglish ? "Order details" : "Деталі замовлення",
             MessageBoxButton.OK,
             MessageBoxImage.Information);
     }
@@ -90,7 +100,11 @@ public partial class OrdersHistoryView : UserControl
             return;
         }
 
-        if (MessageBox.Show($"Скасувати замовлення #{orderId:0000}?", "Скасування замовлення", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+        if (MessageBox.Show(
+                AppSettings.IsEnglish ? $"Cancel order #{orderId:0000}?" : $"Скасувати замовлення #{orderId:0000}?",
+                AppSettings.IsEnglish ? "Cancel order" : "Скасування замовлення",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question) != MessageBoxResult.Yes)
         {
             return;
         }
@@ -98,7 +112,11 @@ public partial class OrdersHistoryView : UserControl
         var order = _context.Orders.FirstOrDefault(item => item.Id == orderId);
         if (order is null)
         {
-            MessageBox.Show("Замовлення не знайдено.", "Історія замовлень", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(
+                AppSettings.IsEnglish ? "Order not found." : "Замовлення не знайдено.",
+                AppSettings.IsEnglish ? "Order history" : "Історія замовлень",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
             return;
         }
 
@@ -118,6 +136,32 @@ public partial class OrdersHistoryView : UserControl
         button.Background = isActive ? new SolidColorBrush(Color.FromRgb(59, 44, 29)) : new SolidColorBrush(Color.FromRgb(242, 238, 232));
         button.Foreground = isActive ? Brushes.White : new SolidColorBrush(Color.FromRgb(59, 44, 29));
     }
+
+    private void ApplyLanguage()
+    {
+        var english = AppSettings.IsEnglish;
+
+        TitleTextBlock.Text = english ? "Order history" : "Історія замовлень";
+        SubtitleTextBlock.Text = english ? "List of all orders" : "Список усіх замовлень";
+        CompletedFilterButton.Content = english ? "Completed" : "Виконані";
+        CanceledFilterButton.Content = english ? "Canceled" : "Скасовані";
+        OrderNumberHeaderTextBlock.Text = english ? "Order #" : "№ замовлення";
+        DateHeaderTextBlock.Text = english ? "Date" : "Дата";
+        ItemsHeaderTextBlock.Text = english ? "Items" : "Позиції";
+        TotalHeaderTextBlock.Text = english ? "Total" : "Сума";
+        StatusHeaderTextBlock.Text = english ? "Status" : "Статус";
+        ActionsHeaderTextBlock.Text = english ? "Actions" : "Дії";
+    }
+
+    private static string GetStatusText(string status)
+    {
+        if (!AppSettings.IsEnglish)
+        {
+            return status;
+        }
+
+        return status == CanceledStatus ? "Canceled" : "Completed";
+    }
 }
 
 public sealed class OrderHistoryRowViewModel
@@ -127,8 +171,11 @@ public sealed class OrderHistoryRowViewModel
     public string Date { get; set; } = string.Empty;
     public string Products { get; set; } = string.Empty;
     public decimal Total { get; set; }
-    public string TotalText => $"{Total:0} грн";
+    public string TotalText => AppSettings.FormatMoney(Total);
     public string Status { get; set; } = string.Empty;
+    public string StatusText => AppSettings.IsEnglish
+        ? Status == "Скасовано" ? "Canceled" : "Completed"
+        : Status;
     public bool CanCancel => Status == "Виконано";
     public Brush StatusBackground => Status == "Скасовано"
         ? new SolidColorBrush(Color.FromRgb(255, 235, 232))
@@ -136,4 +183,6 @@ public sealed class OrderHistoryRowViewModel
     public Brush StatusForeground => Status == "Скасовано"
         ? new SolidColorBrush(Color.FromRgb(192, 62, 52))
         : new SolidColorBrush(Color.FromRgb(63, 139, 69));
+    public string ViewText => AppSettings.IsEnglish ? "View" : "Огляд";
+    public string CancelText => AppSettings.IsEnglish ? "Cancel" : "Скасувати";
 }

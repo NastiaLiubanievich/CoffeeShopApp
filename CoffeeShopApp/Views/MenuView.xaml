@@ -14,8 +14,8 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel>
-                <TextBlock Text="Меню" FontSize="30" FontWeight="Bold" Foreground="#17120E"/>
-                <TextBlock Text="Управління товарами" Foreground="#6E6256" Margin="0,4,0,0"/>
+                <TextBlock x:Name="TitleTextBlock" Text="Меню" FontSize="30" FontWeight="Bold" Foreground="#17120E"/>
+                <TextBlock x:Name="SubtitleTextBlock" Text="Управління товарами" Foreground="#6E6256" Margin="0,4,0,0"/>
             </StackPanel>
 
             <Grid Grid.Column="1" Margin="0,4,0,0">
@@ -43,7 +43,7 @@
                           AlternatingRowBackground="#FBF8F4"
                           SelectionChanged="ProductsDataGrid_SelectionChanged">
                     <DataGrid.Columns>
-                        <DataGridTemplateColumn Header="Фото" Width="66">
+                        <DataGridTemplateColumn x:Name="PhotoColumn" Header="Фото" Width="66">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Border Width="42" Height="34" CornerRadius="5" ClipToBounds="True">
@@ -52,22 +52,22 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="Назва" Binding="{Binding Name}" Width="145"/>
-                        <DataGridTextColumn Header="Категорія" Binding="{Binding CategoryName}" Width="120"/>
-                        <DataGridTextColumn Header="Ціна" Binding="{Binding Price, StringFormat={}{0:0} грн}" Width="76"/>
-                        <DataGridTemplateColumn Header="Доступний" Width="94">
+                        <DataGridTextColumn x:Name="NameColumn" Header="Назва" Binding="{Binding Name}" Width="145"/>
+                        <DataGridTextColumn x:Name="CategoryColumn" Header="Категорія" Binding="{Binding CategoryName}" Width="120"/>
+                        <DataGridTextColumn x:Name="PriceColumn" Header="Ціна" Binding="{Binding PriceText}" Width="76"/>
+                        <DataGridTemplateColumn x:Name="AvailableColumn" Header="Доступний" Width="94">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <CheckBox IsChecked="{Binding IsAvailable}" IsEnabled="False" HorizontalAlignment="Center"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Дії" Width="86">
+                        <DataGridTemplateColumn x:Name="ActionsColumn" Header="Дії" Width="86">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Button Content="Ред." Width="36" Height="26" Padding="0" FontSize="11" Tag="{Binding Id}" Style="{StaticResource GhostButtonStyle}" Click="EditButton_Click"/>
-                                        <Button Content="Вид." Width="36" Height="26" Padding="0" FontSize="11" Margin="6,0,0,0" Tag="{Binding Id}" Style="{StaticResource GhostButtonStyle}" Click="DeleteButton_Click"/>
+                                        <Button x:Name="EditRowButton" Content="Ред." Width="36" Height="26" Padding="0" FontSize="11" Tag="{Binding Id}" Style="{StaticResource GhostButtonStyle}" Click="EditButton_Click"/>
+                                        <Button x:Name="DeleteRowButton" Content="Вид." Width="36" Height="26" Padding="0" FontSize="11" Margin="6,0,0,0" Tag="{Binding Id}" Style="{StaticResource GhostButtonStyle}" Click="DeleteButton_Click"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -88,15 +88,15 @@
 
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                         <StackPanel>
-                            <TextBlock Text="Назва товару" Foreground="#6E6256"/>
+                            <TextBlock x:Name="NameLabelTextBlock" Text="Назва товару" Foreground="#6E6256"/>
                             <TextBox x:Name="NameTextBox" Margin="0,6,0,12"/>
-                            <TextBlock Text="Категорія" Foreground="#6E6256"/>
+                            <TextBlock x:Name="CategoryLabelTextBlock" Text="Категорія" Foreground="#6E6256"/>
                             <ComboBox x:Name="CategoryComboBox" DisplayMemberPath="Name" SelectedValuePath="Id" Height="38" Margin="0,6,0,12"/>
-                            <TextBlock Text="Ціна (грн)" Foreground="#6E6256"/>
+                            <TextBlock x:Name="PriceLabelTextBlock" Text="Ціна (грн)" Foreground="#6E6256"/>
                             <TextBox x:Name="PriceTextBox" Margin="0,6,0,12"/>
-                            <TextBlock Text="Опис" Foreground="#6E6256"/>
+                            <TextBlock x:Name="DescriptionLabelTextBlock" Text="Опис" Foreground="#6E6256"/>
                             <TextBox x:Name="DescriptionTextBox" Height="66" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,6,0,12"/>
-                            <TextBlock Text="Шлях до фото" Foreground="#6E6256"/>
+                            <TextBlock x:Name="ImagePathLabelTextBlock" Text="Шлях до фото" Foreground="#6E6256"/>
                             <TextBox x:Name="ImagePathTextBox" Margin="0,6,0,12"/>
                             <CheckBox x:Name="AvailableCheckBox" Content="Доступний" IsChecked="True"/>
                         </StackPanel>
@@ -107,8 +107,8 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Content="Скасувати" Height="42" Style="{StaticResource GhostButtonStyle}" Margin="0,0,8,0" Click="CancelButton_Click"/>
-                        <Button Grid.Column="1" Content="Зберегти" Height="42" Margin="8,0,0,0" Click="SaveButton_Click"/>
+                        <Button x:Name="CancelButton" Content="Скасувати" Height="42" Style="{StaticResource GhostButtonStyle}" Margin="0,0,8,0" Click="CancelButton_Click"/>
+                        <Button x:Name="SaveButton" Grid.Column="1" Content="Зберегти" Height="42" Margin="8,0,0,0" Click="SaveButton_Click"/>
                     </Grid>
                 </Grid>
             </Border>

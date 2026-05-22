@@ -18,8 +18,8 @@
                     <TextBlock Grid.Row="2" Text="{Binding ProductsCountText}" FontSize="12" Foreground="#6E6256" HorizontalAlignment="Center" Margin="0,6,0,0"/>
 
                     <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button Content="Ред." Width="48" Height="34" Padding="0" FontSize="12" Style="{StaticResource GhostButtonStyle}" Tag="{Binding Id}" Click="EditCategoryButton_Click"/>
-                        <Button Content="Вид." Width="48" Height="34" Padding="0" FontSize="12" Margin="14,0,0,0" Style="{StaticResource GhostButtonStyle}" Tag="{Binding Id}" Click="DeleteCategoryButton_Click"/>
+                        <Button Content="{Binding EditText}" Width="48" Height="34" Padding="0" FontSize="12" Style="{StaticResource GhostButtonStyle}" Tag="{Binding Id}" Click="EditCategoryButton_Click"/>
+                        <Button Content="{Binding DeleteText}" Width="48" Height="34" Padding="0" FontSize="12" Margin="14,0,0,0" Style="{StaticResource GhostButtonStyle}" Tag="{Binding Id}" Click="DeleteCategoryButton_Click"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -39,11 +39,11 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel>
-                <TextBlock Text="Категорії" FontSize="30" FontWeight="Bold" Foreground="#17120E"/>
-                <TextBlock Text="Управління категоріями товарів" Foreground="#6E6256" Margin="0,5,0,0"/>
+                <TextBlock x:Name="TitleTextBlock" Text="Категорії" FontSize="30" FontWeight="Bold" Foreground="#17120E"/>
+                <TextBlock x:Name="SubtitleTextBlock" Text="Управління категоріями товарів" Foreground="#6E6256" Margin="0,5,0,0"/>
             </StackPanel>
 
-            <Button Grid.Column="1" Content="+ Додати категорію" Height="42" Margin="0,4,0,0" Click="AddCategoryButton_Click"/>
+            <Button x:Name="AddCategoryButton" Grid.Column="1" Content="+ Додати категорію" Height="42" Margin="0,4,0,0" Click="AddCategoryButton_Click"/>
         </Grid>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">

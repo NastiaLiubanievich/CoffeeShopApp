@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using CoffeeShopApp.Data;
 using CoffeeShopApp.Models;
+using CoffeeShopApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShopApp;
@@ -14,6 +15,7 @@ public partial class CategoriesView : UserControl
     public CategoriesView()
     {
         InitializeComponent();
+        ApplyLanguage();
         LoadCategories();
     }
 
@@ -117,13 +119,28 @@ public partial class CategoriesView : UserControl
 
         if (category.Products.Count > 0)
         {
-            MessageBox.Show("Не можна видалити категорію, у якій є товари.", "Категорії", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(
+                AppSettings.IsEnglish
+                    ? "You cannot delete a category that contains products."
+                    : "Не можна видалити категорію, у якій є товари.",
+                AppSettings.IsEnglish ? "Categories" : "Категорії",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
             return;
         }
 
         _context.Categories.Remove(category);
         _context.SaveChanges();
         LoadCategories();
+    }
+
+    private void ApplyLanguage()
+    {
+        var english = AppSettings.IsEnglish;
+
+        TitleTextBlock.Text = english ? "Categories" : "Категорії";
+        SubtitleTextBlock.Text = english ? "Product category management" : "Управління категоріями товарів";
+        AddCategoryButton.Content = english ? "+ Add category" : "+ Додати категорію";
     }
 }
 
@@ -132,7 +149,11 @@ public sealed class CategoryCardViewModel
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public int ProductsCount { get; set; }
-    public string ProductsCountText => $"{ProductsCount} товарів";
+    public string ProductsCountText => AppSettings.IsEnglish
+        ? $"{ProductsCount} products"
+        : $"{ProductsCount} товарів";
     public string ImagePath { get; set; } = string.Empty;
     public BitmapImage ImageSource { get; set; } = new();
+    public string EditText => AppSettings.IsEnglish ? "Edit" : "Ред.";
+    public string DeleteText => AppSettings.IsEnglish ? "Del." : "Вид.";
 }

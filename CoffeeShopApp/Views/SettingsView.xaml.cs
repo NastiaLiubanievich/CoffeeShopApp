@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using CoffeeShopApp.Services;
 
 namespace CoffeeShopApp;
@@ -9,41 +10,71 @@ public partial class SettingsView : UserControl
     public SettingsView()
     {
         InitializeComponent();
-        SelectComboBoxItem(LanguageComboBox, AppSettings.InterfaceLanguage);
-        SelectComboBoxItem(TimeZoneComboBox, AppSettings.TimeZone);
-        SelectComboBoxItem(CurrencyComboBox, AppSettings.Currency);
-        SelectComboBoxItem(ThemeComboBox, AppSettings.ThemeName);
+        LoadSettings();
     }
 
-    private void SaveButton_Click(object sender, RoutedEventArgs e)
+    private void LoadSettings()
     {
-        AppSettings.InterfaceLanguage = GetSelectedText(LanguageComboBox);
-        AppSettings.TimeZone = GetSelectedText(TimeZoneComboBox);
-        AppSettings.Currency = GetSelectedText(CurrencyComboBox);
-        AppSettings.ThemeName = GetSelectedText(ThemeComboBox);
-        AppSettings.UseLightTheme = AppSettings.ThemeName == "Світла";
-
-        MessageBox.Show("Налаштування збережено.", "CoffeeShop", MessageBoxButton.OK, MessageBoxImage.Information);
+        CurrentUserTextBlock.Text = App.CurrentUserName;
+        CurrentRoleTextBlock.Text = App.CurrentUserRole;
+        UpdateHeaderColors();
+        UpdateThemeButtons();
     }
 
-    private static void SelectComboBoxItem(ComboBox comboBox, string value)
+    private void LightThemeButton_Click(object sender, RoutedEventArgs e)
     {
-        foreach (var item in comboBox.Items.OfType<ComboBoxItem>())
+        AppSettings.SetTheme("Світла");
+        UpdateHeaderColors();
+        UpdateThemeButtons();
+    }
+
+    private void DarkThemeButton_Click(object sender, RoutedEventArgs e)
+    {
+        AppSettings.SetTheme("Темна");
+        UpdateHeaderColors();
+        UpdateThemeButtons();
+    }
+
+    private void LogoutButton_Click(object sender, RoutedEventArgs e)
+    {
+        App.CurrentUserName = "Адміністратор";
+        App.CurrentUserRole = "Адміністратор";
+
+        var loginWindow = new LoginWindow();
+        Application.Current.MainWindow = loginWindow;
+        loginWindow.Show();
+
+        Window.GetWindow(this)?.Close();
+    }
+
+    private void UpdateThemeButtons()
+    {
+        SetThemeButtonState(LightThemeButton, AppSettings.UseLightTheme);
+        SetThemeButtonState(DarkThemeButton, !AppSettings.UseLightTheme);
+    }
+
+    private void UpdateHeaderColors()
+    {
+        if (AppSettings.UseLightTheme)
         {
-            if ((item.Content?.ToString() ?? string.Empty) == value)
-            {
-                comboBox.SelectedItem = item;
-                return;
-            }
+            TitleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(23, 18, 14));
+            SubtitleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(95, 88, 80));
+            return;
         }
 
-        comboBox.SelectedIndex = 0;
+        TitleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(252, 250, 247));
+        SubtitleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(216, 199, 179));
     }
 
-    private static string GetSelectedText(ComboBox comboBox)
+    private static void SetThemeButtonState(Button button, bool isActive)
     {
-        return comboBox.SelectedItem is ComboBoxItem item
-            ? item.Content?.ToString() ?? string.Empty
-            : string.Empty;
+        button.Background = isActive
+            ? new SolidColorBrush(Color.FromRgb(255, 250, 244))
+            : Brushes.White;
+        button.Foreground = new SolidColorBrush(Color.FromRgb(59, 44, 29));
+        button.BorderBrush = isActive
+            ? new SolidColorBrush(Color.FromRgb(122, 74, 31))
+            : new SolidColorBrush(Color.FromRgb(231, 222, 210));
+        button.BorderThickness = new Thickness(isActive ? 2 : 1);
     }
 }

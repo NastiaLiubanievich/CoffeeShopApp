@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using CoffeeShopApp.Data;
 using CoffeeShopApp.Models;
+using CoffeeShopApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShopApp;
@@ -17,6 +18,7 @@ public partial class MenuView : UserControl
     public MenuView()
     {
         InitializeComponent();
+        ApplyLanguage();
         LoadCategories();
         LoadProducts();
         ClearForm();
@@ -104,7 +106,11 @@ public partial class MenuView : UserControl
             return;
         }
 
-        if (MessageBox.Show($"Видалити товар \"{product.Name}\"?", "Меню", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+        if (MessageBox.Show(
+                AppSettings.IsEnglish ? $"Delete product \"{product.Name}\"?" : $"Видалити товар \"{product.Name}\"?",
+                AppSettings.IsEnglish ? "Menu" : "Меню",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question) != MessageBoxResult.Yes)
         {
             return;
         }
@@ -155,27 +161,39 @@ public partial class MenuView : UserControl
 
         if (string.IsNullOrWhiteSpace(name))
         {
-            MessageBox.Show("Введіть назву товару.", "Меню", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(
+                AppSettings.IsEnglish ? "Enter product name." : "Введіть назву товару.",
+                AppSettings.IsEnglish ? "Menu" : "Меню",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
             price = 0;
             return false;
         }
 
         if (categoryId == 0)
         {
-            MessageBox.Show("Оберіть категорію.", "Меню", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(
+                AppSettings.IsEnglish ? "Choose category." : "Оберіть категорію.",
+                AppSettings.IsEnglish ? "Menu" : "Меню",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
             price = 0;
             return false;
         }
 
         if (!decimal.TryParse(PriceTextBox.Text.Trim(), NumberStyles.Number, CultureInfo.CurrentCulture, out price))
         {
-            MessageBox.Show("Введіть коректну ціну.", "Меню", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(
+                AppSettings.IsEnglish ? "Enter a valid price." : "Введіть коректну ціну.",
+                AppSettings.IsEnglish ? "Menu" : "Меню",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
             return false;
         }
 
         if (string.IsNullOrWhiteSpace(description))
         {
-            description = "Без опису";
+            description = AppSettings.IsEnglish ? "No description" : "Без опису";
         }
 
         if (string.IsNullOrWhiteSpace(imagePath))
@@ -189,7 +207,7 @@ public partial class MenuView : UserControl
     private void FillForm(MenuProductViewModel product)
     {
         _editingProductId = product.Id;
-        FormTitleTextBlock.Text = "Редагувати товар";
+        FormTitleTextBlock.Text = AppSettings.IsEnglish ? "Edit product" : "Редагувати товар";
         NameTextBox.Text = product.Name;
         DescriptionTextBox.Text = product.Description;
         PriceTextBox.Text = product.Price.ToString("0.##");
@@ -207,13 +225,38 @@ public partial class MenuView : UserControl
     {
         _editingProductId = null;
         ProductsDataGrid.SelectedItem = null;
-        FormTitleTextBlock.Text = "Додати товар";
+        FormTitleTextBlock.Text = AppSettings.IsEnglish ? "Add product" : "Додати товар";
         NameTextBox.Clear();
         DescriptionTextBox.Clear();
         PriceTextBox.Clear();
         ImagePathTextBox.Clear();
         AvailableCheckBox.IsChecked = true;
         CategoryComboBox.SelectedIndex = CategoryComboBox.Items.Count > 0 ? 0 : -1;
+    }
+
+    private void ApplyLanguage()
+    {
+        var english = AppSettings.IsEnglish;
+
+        TitleTextBlock.Text = english ? "Menu" : "Меню";
+        SubtitleTextBlock.Text = english ? "Product management" : "Управління товарами";
+        SearchPlaceholderTextBlock.Text = english ? "Search products..." : "Пошук товарів...";
+
+        PhotoColumn.Header = english ? "Photo" : "Фото";
+        NameColumn.Header = english ? "Name" : "Назва";
+        CategoryColumn.Header = english ? "Category" : "Категорія";
+        PriceColumn.Header = english ? "Price" : "Ціна";
+        AvailableColumn.Header = english ? "Available" : "Доступний";
+        ActionsColumn.Header = english ? "Actions" : "Дії";
+
+        NameLabelTextBlock.Text = english ? "Product name" : "Назва товару";
+        CategoryLabelTextBlock.Text = english ? "Category" : "Категорія";
+        PriceLabelTextBlock.Text = english ? "Price (грн)" : "Ціна (грн)";
+        DescriptionLabelTextBlock.Text = english ? "Description" : "Опис";
+        ImagePathLabelTextBlock.Text = english ? "Photo path" : "Шлях до фото";
+        AvailableCheckBox.Content = english ? "Available" : "Доступний";
+        CancelButton.Content = english ? "Cancel" : "Скасувати";
+        SaveButton.Content = english ? "Save" : "Зберегти";
     }
 }
 
@@ -225,6 +268,7 @@ public sealed class MenuProductViewModel
     public int CategoryId { get; set; }
     public string CategoryName { get; set; } = string.Empty;
     public decimal Price { get; set; }
+    public string PriceText => AppSettings.FormatMoney(Price);
     public string ImagePath { get; set; } = string.Empty;
     public bool IsAvailable { get; set; }
     public BitmapImage ImageSource { get; set; } = new();

@@ -23,6 +23,7 @@ public partial class MainWindow : Window
 
     private int _selectedCategoryId;
     private string _searchText = string.Empty;
+    private ProductFilterMode _productFilterMode = ProductFilterMode.All;
 
     private ListBox? CartList => FindName("CartListBox") as ListBox;
     private ItemsControl? ProductsControl => FindName("ProductsItemsControl") as ItemsControl;
@@ -40,6 +41,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Title = $"CoffeeShop - {App.CurrentUserName}";
+        ApplyLanguage();
         UpdateCurrentUserText();
 
         if (CartList is not null)
@@ -48,8 +50,45 @@ public partial class MainWindow : Window
         }
 
         StartClock();
+        AppSettings.Changed += AppSettings_Changed;
+        ApplyTheme();
         LoadProducts();
         RefreshCart();
+    }
+
+    private void AppSettings_Changed(object? sender, EventArgs e)
+    {
+        ApplyTheme();
+        ApplyLanguage();
+        UpdateClock();
+        UpdateCurrentUserText();
+        ApplyFilters();
+        RefreshCart();
+
+        if (PageContent?.Content is ReportsView)
+        {
+            PageContent.Content = new ReportsView();
+        }
+
+        if (PageContent?.Content is OrdersHistoryView)
+        {
+            PageContent.Content = new OrdersHistoryView();
+        }
+
+        if (PageContent?.Content is SettingsView)
+        {
+            PageContent.Content = new SettingsView();
+        }
+
+        if (PageContent?.Content is MenuView)
+        {
+            PageContent.Content = new MenuView();
+        }
+
+        if (PageContent?.Content is CategoriesView)
+        {
+            PageContent.Content = new CategoriesView();
+        }
     }
 
     private void StartClock()
@@ -70,7 +109,7 @@ public partial class MainWindow : Window
 
     private void UpdateClock()
     {
-        var now = DateTime.Now;
+        var now = AppSettings.GetCurrentTime();
 
         if (TodayText is not null)
         {
@@ -109,6 +148,14 @@ public partial class MainWindow : Window
                 product.Name.Contains(_searchText, StringComparison.CurrentCultureIgnoreCase) ||
                 product.Description.Contains(_searchText, StringComparison.CurrentCultureIgnoreCase));
         }
+
+        products = _productFilterMode switch
+        {
+            ProductFilterMode.Under50 => products.Where(product => product.Price <= 50m),
+            ProductFilterMode.From50To80 => products.Where(product => product.Price > 50m && product.Price <= 80m),
+            ProductFilterMode.From80 => products.Where(product => product.Price > 80m),
+            _ => products
+        };
 
         if (ProductsControl is not null)
         {
@@ -191,7 +238,7 @@ public partial class MainWindow : Window
 
         if (TotalText is not null)
         {
-            TotalText.Text = $"{total:0} грн";
+            TotalText.Text = AppSettings.FormatMoney(total);
         }
 
         if (ItemsCountText is not null)
@@ -267,6 +314,38 @@ public partial class MainWindow : Window
                     ? Visibility.Visible
                     : Visibility.Collapsed;
             }
+        }
+
+        ApplyFilters();
+    }
+
+    private void FilterButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.ContextMenu is not null)
+        {
+            button.ContextMenu.PlacementTarget = button;
+            button.ContextMenu.IsOpen = true;
+        }
+    }
+
+    private void FilterMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuItem { Tag: string filter })
+        {
+            return;
+        }
+
+        _productFilterMode = filter switch
+        {
+            "Under50" => ProductFilterMode.Under50,
+            "From50To80" => ProductFilterMode.From50To80,
+            "From80" => ProductFilterMode.From80,
+            _ => ProductFilterMode.All
+        };
+
+        if (FilterButton is not null)
+        {
+            FilterButton.Content = GetFilterButtonText();
         }
 
         ApplyFilters();
@@ -436,6 +515,125 @@ public partial class MainWindow : Window
     {
         WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
     }
+
+    private void ApplyTheme()
+    {
+        Background = AppSettings.UseLightTheme
+            ? new SolidColorBrush(Color.FromRgb(248, 246, 242))
+            : new SolidColorBrush(Color.FromRgb(48, 39, 27));
+    }
+
+    private void ApplyLanguage()
+    {
+        if (FindName("OrdersNavButton") is Button ordersButton)
+        {
+            ordersButton.Content = "Замовлення";
+        }
+
+        if (FindName("MenuNavButton") is Button menuButton)
+        {
+            menuButton.Content = "Меню";
+        }
+
+        if (FindName("CategoriesNavButton") is Button categoriesButton)
+        {
+            categoriesButton.Content = "Категорії";
+        }
+
+        if (FindName("HistoryNavButton") is Button historyButton)
+        {
+            historyButton.Content = "Історія замовлень";
+        }
+
+        if (FindName("ReportsNavButton") is Button reportsButton)
+        {
+            reportsButton.Content = "Звіти";
+        }
+
+        if (FindName("SettingsNavButton") is Button settingsButton)
+        {
+            settingsButton.Content = "Налаштування";
+        }
+
+        SetText("TodayLabelTextBlock", "Сьогодні");
+        SetText("TimeLabelTextBlock", "Час");
+        SetText("OrdersTitleTextBlock", "Меню");
+        SetText("OrdersSubtitleTextBlock", "Оберіть товари для замовлення");
+        SetText("SearchPlaceholderTextBlock", "Пошук товарів...");
+        SetText("HotDrinksFirstLineTextBlock", "Гарячі");
+        SetText("HotDrinksSecondLineTextBlock", "напої");
+        SetText("ColdDrinksFirstLineTextBlock", "Холодні");
+        SetText("ColdDrinksSecondLineTextBlock", "напої");
+        SetText("CurrentOrderTitleTextBlock", "Поточне замовлення");
+        SetText("TotalLabelTextBlock", "Разом:");
+        SetText("DatabaseStatusTextBlock", "●  Підключено до бази даних");
+
+        SetButton("AllCategoryButton", "Усі");
+        SetButton("CoffeeCategoryButton", "Кава");
+        SetButton("SnacksCategoryButton", "Перекуси");
+        SetButton("BakeryCategoryButton", "Випічка");
+        SetButton("DessertsCategoryButton", "Десерти");
+        SetButton("SaveOrderButton", "Оформити замовлення");
+        SetButton("ClearOrderButton", "Очистити замовлення");
+        SetButton("FilterButton", GetFilterButtonText());
+
+        UpdateFilterMenuLanguage();
+    }
+
+    private void UpdateFilterMenuLanguage()
+    {
+        if (FilterButton?.ContextMenu is not { } contextMenu)
+        {
+            return;
+        }
+
+        foreach (var item in contextMenu.Items.OfType<MenuItem>())
+        {
+            item.Header = item.Tag switch
+            {
+                "All" => "Без фільтра",
+                "Under50" => "До 50 грн",
+                "From50To80" => "50-80 грн",
+                "From80" => "Від 80 грн",
+                _ => item.Header
+            };
+        }
+    }
+
+    private string GetFilterButtonText()
+    {
+        return _productFilterMode switch
+        {
+            ProductFilterMode.Under50 => "До 50 грн",
+            ProductFilterMode.From50To80 => "50-80 грн",
+            ProductFilterMode.From80 => "Від 80 грн",
+            _ => "Фільтр"
+        };
+    }
+
+    private void SetText(string name, string value)
+    {
+        if (FindName(name) is TextBlock textBlock)
+        {
+            textBlock.Text = value;
+        }
+    }
+
+    private void SetButton(string name, string value)
+    {
+        if (FindName(name) is Button button)
+        {
+            button.Content = value;
+        }
+    }
+}
+
+public enum ProductFilterMode
+{
+    All,
+    Under50,
+    From50To80,
+    From80
 }
 
 public sealed class ProductCardViewModel
@@ -452,6 +650,7 @@ public sealed class ProductCardViewModel
     public BitmapImage ImageSource { get; }
     public Brush AccentBrush { get; }
     public Thickness AccentThickness { get; }
+    public string PriceText => AppSettings.FormatMoney(Product.Price);
 }
 
 public sealed class CartItemViewModel
@@ -466,6 +665,8 @@ public sealed class CartItemViewModel
     public BitmapImage ImageSource { get; }
     public int Quantity { get; set; } = 1;
     public decimal LineTotal => Product.Price * Quantity;
+    public string PriceText => AppSettings.FormatMoney(Product.Price);
+    public string LineTotalText => AppSettings.FormatMoney(LineTotal);
 }
 
 public static class ProductImageProvider
