@@ -89,6 +89,8 @@ public partial class MainWindow : Window
         {
             PageContent.Content = new CategoriesView();
         }
+
+        ApplyTheme();
     }
 
     private void StartClock()
@@ -464,6 +466,7 @@ public partial class MainWindow : Window
         }
 
         LoadProducts();
+        ApplyTheme();
     }
 
     private void ShowEmbeddedPage(UserControl page)
@@ -483,6 +486,8 @@ public partial class MainWindow : Window
             PageContent.Content = page;
             PageContent.Visibility = Visibility.Visible;
         }
+
+        Dispatcher.BeginInvoke(ApplyTheme);
     }
 
     private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -521,6 +526,149 @@ public partial class MainWindow : Window
         Background = AppSettings.UseLightTheme
             ? new SolidColorBrush(Color.FromRgb(248, 246, 242))
             : new SolidColorBrush(Color.FromRgb(48, 39, 27));
+
+        ApplyThemeToElement(OrdersPage);
+        ApplyThemeToElement(Cart);
+        ApplyThemeToElement(PageContent);
+    }
+
+    private void ApplyThemeToElement(DependencyObject? element)
+    {
+        if (element is null)
+        {
+            return;
+        }
+
+        if (element is Border border)
+        {
+            ApplyBorderTheme(border);
+        }
+
+        if (element is TextBlock textBlock)
+        {
+            ApplyTextTheme(textBlock);
+        }
+
+        if (element is TextBox textBox)
+        {
+            textBox.Background = AppSettings.UseLightTheme
+                ? Brushes.White
+                : new SolidColorBrush(Color.FromRgb(58, 45, 32));
+            textBox.Foreground = AppSettings.UseLightTheme
+                ? new SolidColorBrush(Color.FromRgb(23, 18, 14))
+                : new SolidColorBrush(Color.FromRgb(248, 246, 242));
+            textBox.BorderBrush = AppSettings.UseLightTheme
+                ? new SolidColorBrush(Color.FromRgb(231, 222, 210))
+                : new SolidColorBrush(Color.FromRgb(91, 74, 54));
+        }
+
+        if (element is DataGrid dataGrid)
+        {
+            dataGrid.Background = AppSettings.UseLightTheme
+                ? Brushes.White
+                : new SolidColorBrush(Color.FromRgb(58, 45, 32));
+            dataGrid.Foreground = AppSettings.UseLightTheme
+                ? new SolidColorBrush(Color.FromRgb(23, 18, 14))
+                : new SolidColorBrush(Color.FromRgb(248, 246, 242));
+            dataGrid.RowBackground = dataGrid.Background;
+            dataGrid.AlternatingRowBackground = AppSettings.UseLightTheme
+                ? new SolidColorBrush(Color.FromRgb(251, 248, 244))
+                : new SolidColorBrush(Color.FromRgb(66, 52, 37));
+        }
+
+        var childrenCount = VisualTreeHelper.GetChildrenCount(element);
+        for (var index = 0; index < childrenCount; index++)
+        {
+            ApplyThemeToElement(VisualTreeHelper.GetChild(element, index));
+        }
+    }
+
+    private static void ApplyBorderTheme(Border border)
+    {
+        if (AppSettings.UseLightTheme)
+        {
+            if (IsBrushColor(border.Background, 58, 45, 32) ||
+                IsBrushColor(border.Background, 66, 52, 37) ||
+                IsBrushColor(border.Background, 48, 39, 27))
+            {
+                border.Background = Brushes.White;
+            }
+
+            if (IsBrushColor(border.BorderBrush, 91, 74, 54))
+            {
+                border.BorderBrush = new SolidColorBrush(Color.FromRgb(231, 222, 210));
+            }
+
+            return;
+        }
+
+        if (IsLightBrush(border.Background))
+        {
+            border.Background = new SolidColorBrush(Color.FromRgb(58, 45, 32));
+        }
+
+        if (IsLightBrush(border.BorderBrush))
+        {
+            border.BorderBrush = new SolidColorBrush(Color.FromRgb(91, 74, 54));
+        }
+    }
+
+    private static void ApplyTextTheme(TextBlock textBlock)
+    {
+        if (IsGreenOrRedBrush(textBlock.Foreground))
+        {
+            return;
+        }
+
+        if (AppSettings.UseLightTheme)
+        {
+            if (IsBrushColor(textBlock.Foreground, 248, 246, 242) ||
+                IsBrushColor(textBlock.Foreground, 216, 199, 179))
+            {
+                textBlock.Foreground = IsStrongText(textBlock)
+                    ? new SolidColorBrush(Color.FromRgb(23, 18, 14))
+                    : new SolidColorBrush(Color.FromRgb(95, 88, 80));
+            }
+
+            return;
+        }
+
+        textBlock.Foreground = IsStrongText(textBlock)
+            ? new SolidColorBrush(Color.FromRgb(248, 246, 242))
+            : new SolidColorBrush(Color.FromRgb(216, 199, 179));
+    }
+
+    private static bool IsStrongText(TextBlock textBlock)
+    {
+        return textBlock.FontWeight.ToOpenTypeWeight() >= FontWeights.SemiBold.ToOpenTypeWeight() ||
+               textBlock.FontSize >= 18;
+    }
+
+    private static bool IsLightBrush(Brush? brush)
+    {
+        return brush is SolidColorBrush solidColorBrush &&
+               solidColorBrush.Color.R > 210 &&
+               solidColorBrush.Color.G > 200 &&
+               solidColorBrush.Color.B > 185;
+    }
+
+    private static bool IsGreenOrRedBrush(Brush? brush)
+    {
+        if (brush is not SolidColorBrush solidColorBrush)
+        {
+            return false;
+        }
+
+        var color = solidColorBrush.Color;
+        return color.G > color.R + 25 || color.R > color.G + 45;
+    }
+
+    private static bool IsBrushColor(Brush? brush, byte red, byte green, byte blue)
+    {
+        return brush is SolidColorBrush solidColorBrush &&
+               solidColorBrush.Color.R == red &&
+               solidColorBrush.Color.G == green &&
+               solidColorBrush.Color.B == blue;
     }
 
     private void ApplyLanguage()
