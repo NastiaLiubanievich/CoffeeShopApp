@@ -38,6 +38,7 @@ public partial class OrdersHistoryView : UserControl
                     ? AppSettings.IsEnglish ? "No items" : "Без позицій"
                     : string.Join(", ", order.Items.Select(item => $"{item.Product.Name} x{item.Quantity}")),
                 Total = order.TotalAmount,
+                PaymentMethod = order.PaymentMethod,
                 Status = order.Status
             })
             .ToList();
@@ -86,8 +87,8 @@ public partial class OrdersHistoryView : UserControl
 
         MessageBox.Show(
             AppSettings.IsEnglish
-                ? $"Order #{order.Id:0000}\nDate: {order.OrderDate:dd.MM.yyyy HH:mm}\nStatus: {GetStatusText(order.Status)}\n\n{products}\n\nTotal: {AppSettings.FormatMoney(order.TotalAmount)}"
-                : $"Замовлення #{order.Id:0000}\nДата: {order.OrderDate:dd.MM.yyyy HH:mm}\nСтатус: {GetStatusText(order.Status)}\n\n{products}\n\nСума: {AppSettings.FormatMoney(order.TotalAmount)}",
+                ? $"Order #{order.Id:0000}\nDate: {order.OrderDate:dd.MM.yyyy HH:mm}\nPayment: {order.PaymentMethod}\nStatus: {GetStatusText(order.Status)}\n\n{products}\n\nTotal: {AppSettings.FormatMoney(order.TotalAmount)}"
+                : $"Замовлення #{order.Id:0000}\nДата: {order.OrderDate:dd.MM.yyyy HH:mm}\nОплата: {order.PaymentMethod}\nСтатус: {GetStatusText(order.Status)}\n\n{products}\n\nСума: {AppSettings.FormatMoney(order.TotalAmount)}",
             AppSettings.IsEnglish ? "Order details" : "Деталі замовлення",
             MessageBoxButton.OK,
             MessageBoxImage.Information);
@@ -149,6 +150,7 @@ public partial class OrdersHistoryView : UserControl
         DateHeaderTextBlock.Text = english ? "Date" : "Дата";
         ItemsHeaderTextBlock.Text = english ? "Items" : "Позиції";
         TotalHeaderTextBlock.Text = english ? "Total" : "Сума";
+        PaymentHeaderTextBlock.Text = english ? "Payment" : "Оплата";
         StatusHeaderTextBlock.Text = english ? "Status" : "Статус";
         ActionsHeaderTextBlock.Text = english ? "Actions" : "Дії";
     }
@@ -172,6 +174,7 @@ public sealed class OrderHistoryRowViewModel
     public string Products { get; set; } = string.Empty;
     public decimal Total { get; set; }
     public string TotalText => AppSettings.FormatMoney(Total);
+    public string PaymentMethod { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
     public string StatusText => AppSettings.IsEnglish
         ? Status == "Скасовано" ? "Canceled" : "Completed"

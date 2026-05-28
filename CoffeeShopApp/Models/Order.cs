@@ -12,6 +12,7 @@ public class Order
     public DateTime OrderDate { get; set; }
     public decimal TotalAmount { get; set; }
     public string Status { get; set; } = "Виконано";
+    public string PaymentMethod { get; set; } = "Готівка";
 
     public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
 }

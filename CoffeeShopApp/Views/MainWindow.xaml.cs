@@ -257,11 +257,18 @@ public partial class MainWindow : Window
             return;
         }
 
+        var paymentWindow = new PaymentMethodWindow { Owner = this };
+        if (paymentWindow.ShowDialog() != true)
+        {
+            return;
+        }
+
         var order = new Order
         {
             OrderDate = DateTime.Now,
             TotalAmount = _cart.Sum(item => item.LineTotal),
-            Status = "Виконано"
+            Status = "Виконано",
+            PaymentMethod = paymentWindow.PaymentMethod
         };
 
         _context.Orders.Add(order);

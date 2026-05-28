@@ -36,16 +36,18 @@
                             <ColumnDefinition Width="120"/>
                             <ColumnDefinition Width="170"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="170"/>
+                            <ColumnDefinition Width="150"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock x:Name="OrderNumberHeaderTextBlock" Text="№ замовлення" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center" Margin="16,0"/>
                         <TextBlock x:Name="DateHeaderTextBlock" Grid.Column="1" Text="Дата" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center"/>
                         <TextBlock x:Name="ItemsHeaderTextBlock" Grid.Column="2" Text="Позиції" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center"/>
                         <TextBlock x:Name="TotalHeaderTextBlock" Grid.Column="3" Text="Сума" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="StatusHeaderTextBlock" Grid.Column="4" Text="Статус" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="ActionsHeaderTextBlock" Grid.Column="5" Text="Дії" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="PaymentHeaderTextBlock" Grid.Column="4" Text="Оплата" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="StatusHeaderTextBlock" Grid.Column="5" Text="Статус" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ActionsHeaderTextBlock" Grid.Column="6" Text="Дії" FontSize="12" FontWeight="SemiBold" Foreground="#6E6256" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Grid>
                 </Border>
 
@@ -59,18 +61,20 @@
                                             <ColumnDefinition Width="120"/>
                                             <ColumnDefinition Width="170"/>
                                             <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="110"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
                                             <ColumnDefinition Width="120"/>
-                                            <ColumnDefinition Width="170"/>
+                                            <ColumnDefinition Width="150"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="{Binding OrderNumber}" FontWeight="SemiBold" Foreground="#17120E" VerticalAlignment="Center" Margin="16,0"/>
                                         <TextBlock Grid.Column="1" Text="{Binding Date}" Foreground="#4C4034" VerticalAlignment="Center"/>
                                         <TextBlock Grid.Column="2" Text="{Binding Products}" Foreground="#4C4034" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                                         <TextBlock Grid.Column="3" Text="{Binding TotalText}" FontWeight="SemiBold" Foreground="#17120E" VerticalAlignment="Center"/>
-                                        <Border Grid.Column="4" Background="{Binding StatusBackground}" CornerRadius="10" Padding="10,4" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                        <TextBlock Grid.Column="4" Text="{Binding PaymentMethod}" Foreground="#4C4034" VerticalAlignment="Center"/>
+                                        <Border Grid.Column="5" Background="{Binding StatusBackground}" CornerRadius="10" Padding="10,4" HorizontalAlignment="Left" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusForeground}" FontWeight="SemiBold" FontSize="12"/>
                                         </Border>
-                                        <StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <Button Content="{Binding ViewText}" Width="58" Height="28" Padding="0" FontSize="12" Style="{StaticResource GhostButtonStyle}" Tag="{Binding Id}" Click="ViewOrderButton_Click"/>
                                             <Button Content="{Binding CancelText}" Width="88" Height="28" Padding="0" FontSize="12" Margin="8,0,0,0" Tag="{Binding Id}" IsEnabled="{Binding CanCancel}" Click="CancelOrderButton_Click"/>
                                         </StackPanel>
